@@ -24,6 +24,11 @@ namespace Minecraft
         }
         static void Main(string[] args)
         {
+            
+            
+
+
+
             Console.CursorVisible = false;
             Console.BackgroundColor = ConsoleColor.Cyan;
             Console.Clear();
@@ -35,7 +40,7 @@ namespace Minecraft
             Player player = new Player();
             //Move this to the block method using switch case or make a new class block
 
-            
+
             int[,] grid = new int[player.y_size, player.x_size];
             BuildWorld(grid);
             while (true)
@@ -45,7 +50,7 @@ namespace Minecraft
                 {
                     player.grounded = false;
                     Console.ForegroundColor = ConsoleColor.White;
-                    WriteAt("  ", player.x * 2, player.y-1);
+                    WriteAt("  ", player.x * 2, player.y - 1);
                     //WriteAt("  ", player.x * 2, player.y);
 
                     Console.ForegroundColor = ConsoleColor.Cyan;
@@ -63,20 +68,19 @@ namespace Minecraft
 
         }
 
+
         private static void BuildWorld(int[,] grid)
         {
             Block_ids air = new Block_ids(0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
-            Block_ids Grass = new Block_ids(1, "▀▀",ConsoleColor.DarkGreen,ConsoleColor.DarkYellow);
+            Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
             Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
             Block_ids stone = new Block_ids(3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
             Block_ids wood = new Block_ids(4, "██", ConsoleColor.DarkRed, ConsoleColor.DarkRed);
 
 
-            Fill_Index(63, 30, grid, dirt);
-            //Fill_Index(63, 21, grid, Grass);
             
-            Fill_Index(60,20, grid, air);
-            Fill_Index_Cord(10,10,20,20, grid, wood);
+            Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
+            Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
         }
 
         private static void GetInput(int[,] grid, object instance)
@@ -95,54 +99,49 @@ namespace Minecraft
                 WriteAt("  ", x * 2, y);
                 WriteAt("  ", 110, 0);
             }
-            
+
             switch (player.Input)
             {
                 case "W":
 
-                    if(player.grounded == true)
+                    if (player.grounded == true)
                     {
-                        y-=2;
+                        y -= 2;
                         //WriteAt("██", x * 2, y - 1);
                         WriteAt("██", x * 2, y);
-                        grid[player.y-1, player.x] = 0;
+                        grid[player.y - 1, player.x] = 0;
                         player.grounded = false;
                     }
-                    
-                    
+
+
                     break;
                 case "A":
 
-                    
-                    if(player.grounded == false)
-                    {
-                        WriteAt("██", x * 2, y - 1);
-                        WriteAt("██", x * 2, y);
-                        x -=1;
-                    }
-                    else
-                    {
-                        x--;
-                    }
 
-                    break;
-                case "S":
-
-                    grid[player.y+1, player.x] = 0;
-                    WriteAt("  ", x * 2, y + 1);
-                    break;
-                case "D":
-                    
                     if (player.grounded == false)
                     {
                         WriteAt("██", x * 2, y - 1);
                         WriteAt("██", x * 2, y);
-                        x += 1;
+                        
+                    }
+                    x--;
+
+                    break;
+                case "S":
+
+                    grid[player.y + 1, player.x] = 0;
+                    WriteAt("  ", x * 2, y + 1);
+                    break;
+                case "D":
+
+                    if (player.grounded == false)
+                    {
+                        WriteAt("██", x * 2, y - 1);
+                        WriteAt("██", x * 2, y);
+                        
                     }
                     else
-                    {
-                        x++;
-                    }
+                    x++;
                     break;
             }
             player.Input = null;
@@ -168,14 +167,14 @@ namespace Minecraft
                     Console.BackgroundColor = Block.BG;
                     grid[j, i] = Block.id;
                     WriteAt(Block.Texture, i * 2, j);
-                    
+
 
                 }
             }
             Console.ForegroundColor = default;
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
-        static void Fill_Index_Cord(int x1, int y1,int x2,int y2, int[,] grid, Block_ids Block)
+        static void Fill_Index_Cord(int x1, int y1, int x2, int y2, int[,] grid, Block_ids Block)
         {
 
             for (int j = y1; j < y2; j++)
