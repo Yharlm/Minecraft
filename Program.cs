@@ -69,14 +69,14 @@ namespace Minecraft
             Block_ids Grass = new Block_ids(1, "▀▀",ConsoleColor.DarkGreen,ConsoleColor.DarkYellow);
             Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
             Block_ids stone = new Block_ids(3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
-            Block_ids wood = new Block_ids(4, "██", ConsoleColor.DarkGray, ConsoleColor.DarkRed);
+            Block_ids wood = new Block_ids(4, "██", ConsoleColor.DarkRed, ConsoleColor.DarkRed);
 
 
             Fill_Index(63, 30, grid, dirt);
             //Fill_Index(63, 21, grid, Grass);
             
             Fill_Index(60,20, grid, air);
-            Fill_Index_Cord(10,10,20,20, grid, stone);
+            Fill_Index_Cord(10,10,20,20, grid, wood);
         }
 
         private static void GetInput(int[,] grid, object instance)
@@ -103,7 +103,7 @@ namespace Minecraft
                     if(player.grounded == true)
                     {
                         y-=2;
-                        WriteAt("██", x * 2, y - 1);
+                        //WriteAt("██", x * 2, y - 1);
                         WriteAt("██", x * 2, y);
                         grid[player.y-1, player.x] = 0;
                         player.grounded = false;
@@ -113,12 +113,16 @@ namespace Minecraft
                     break;
                 case "A":
 
-                    x--;
+                    
                     if(player.grounded == false)
                     {
                         WriteAt("██", x * 2, y - 1);
                         WriteAt("██", x * 2, y);
                         x -=1;
+                    }
+                    else
+                    {
+                        x--;
                     }
 
                     break;
@@ -128,12 +132,16 @@ namespace Minecraft
                     WriteAt("  ", x * 2, y + 1);
                     break;
                 case "D":
-                    x++;
+                    
                     if (player.grounded == false)
                     {
                         WriteAt("██", x * 2, y - 1);
                         WriteAt("██", x * 2, y);
                         x += 1;
+                    }
+                    else
+                    {
+                        x++;
                     }
                     break;
             }
