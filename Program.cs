@@ -32,6 +32,7 @@ namespace Minecraft
 
             Game overworld = new Game();
             Player player = new Player();
+            //Move this to the block method using switch case or make a new class block
 
             string[] Blocks = new string[10];
             {
@@ -55,6 +56,7 @@ namespace Minecraft
 
         private static void BuildWorld(int[,] grid)
         {
+            
 
         }
 
