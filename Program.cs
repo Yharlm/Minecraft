@@ -24,8 +24,8 @@ namespace Minecraft
         }
         static void Main(string[] args)
         {
-            
-            
+            Console_runE();
+
 
 
 
@@ -43,6 +43,8 @@ namespace Minecraft
 
             int[,] grid = new int[player.y_size, player.x_size];
             BuildWorld(grid);
+            BlockUpdate(grid);
+
             while (true)
             {
                 GetInput(grid, player);
@@ -56,7 +58,7 @@ namespace Minecraft
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     player.y++;
                     Thread.Sleep(100);
-
+                    
 
                 }
                 else
@@ -68,6 +70,45 @@ namespace Minecraft
 
         }
 
+        private static void Console_runE()
+        {
+           
+            
+            int n = int.Parse(Console.ReadLine());
+            double[] p = new double[5];
+            int input;
+            for (int i = 0; i < n; i++)
+            {       
+                input = int.Parse(Console.ReadLine());
+
+                if (input < 200) p[0]++;
+                else if (input <= 399) p[1]++;
+                else if (input <= 599) p[2]++;
+                else if (input <= 799) p[3]++;
+                else if (input >= 800) p[4]++;
+            }
+            int PNum = 1;
+            foreach(double i in p)
+            {
+                double result = i / n;
+                result = result * 100;
+                Console.WriteLine("P"+ PNum + ":"+result);
+                PNum++;
+            }
+            Console.ReadLine();
+        }
+
+        private static void BlockUpdate(int[,] grid)
+        {
+            for(int i = 0; i < grid.GetLength(1); i++)
+            {
+                int water_level = 0; 
+                for (int j = 0; j < grid.GetLength(0); j++)
+                {
+                    //if (grid[j, i] == 0)  
+                }
+            }
+        }
 
         private static void BuildWorld(int[,] grid)
         {
@@ -76,9 +117,12 @@ namespace Minecraft
             Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
             Block_ids stone = new Block_ids(3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
             Block_ids wood = new Block_ids(4, "██", ConsoleColor.DarkRed, ConsoleColor.DarkRed);
-
-
+            Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
+            Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             
+
+
+
             Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
             Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
         }
@@ -122,7 +166,7 @@ namespace Minecraft
                     {
                         WriteAt("██", x * 2, y - 1);
                         WriteAt("██", x * 2, y);
-                        
+
                     }
                     x--;
 
@@ -138,10 +182,10 @@ namespace Minecraft
                     {
                         WriteAt("██", x * 2, y - 1);
                         WriteAt("██", x * 2, y);
-                        
+
                     }
                     else
-                    x++;
+                        x++;
                     break;
             }
             player.Input = null;
