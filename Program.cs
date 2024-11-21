@@ -1,5 +1,7 @@
 //using ConsoleNewMinigame;
+using Minecraft;
 using System;
+using System.Numerics;
 
 namespace Minecraft
 {
@@ -24,9 +26,7 @@ namespace Minecraft
         }
         static void Main(string[] args)
         {
-            Console_runE();
-
-
+            //Console_runE();
 
 
             Console.CursorVisible = false;
@@ -47,6 +47,10 @@ namespace Minecraft
 
             while (true)
             {
+                string timer = (overworld.time += 0.0002).ToString();
+                Console.ForegroundColor = ConsoleColor.White;
+                WriteAt(timer[0].ToString(), 0, 2);
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 GetInput(grid, player);
                 if (grid[player.y + 1, player.x] == 0)
                 {
@@ -58,7 +62,7 @@ namespace Minecraft
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     player.y++;
                     Thread.Sleep(100);
-                    
+
 
                 }
                 else
@@ -72,13 +76,13 @@ namespace Minecraft
 
         private static void Console_runE()
         {
-           
-            
+
+
             int n = int.Parse(Console.ReadLine());
             double[] p = new double[5];
             int input;
             for (int i = 0; i < n; i++)
-            {       
+            {
                 input = int.Parse(Console.ReadLine());
 
                 if (input < 200) p[0]++;
@@ -88,11 +92,11 @@ namespace Minecraft
                 else if (input >= 800) p[4]++;
             }
             int PNum = 1;
-            foreach(double i in p)
+            foreach (double i in p)
             {
                 double result = i / n;
                 result = result * 100;
-                Console.WriteLine("P"+ PNum + ":"+result);
+                Console.WriteLine("P" + PNum + ":" + result);
                 PNum++;
             }
             Console.ReadLine();
@@ -100,9 +104,9 @@ namespace Minecraft
 
         private static void BlockUpdate(int[,] grid)
         {
-            for(int i = 0; i < grid.GetLength(1); i++)
+            for (int i = 0; i < grid.GetLength(1); i++)
             {
-                int water_level = 0; 
+                int water_level = 0;
                 for (int j = 0; j < grid.GetLength(0); j++)
                 {
                     //if (grid[j, i] == 0)  
@@ -119,7 +123,7 @@ namespace Minecraft
             Block_ids wood = new Block_ids(4, "██", ConsoleColor.DarkRed, ConsoleColor.DarkRed);
             Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
-            
+
 
 
 
@@ -127,6 +131,19 @@ namespace Minecraft
             Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
         }
 
+        static void Structure(int x, int[,] grid)
+        {
+            Structure tree = new Structure();
+            tree.Struct = { 
+                { 1,1},
+                { 1,1} 
+            };
+
+
+        }
+
+        
+        //static double velocity() 
         private static void GetInput(int[,] grid, object instance)
         {
 
@@ -138,7 +155,10 @@ namespace Minecraft
             {
 
                 player.Input = Console.ReadKey().Key.ToString();
-                player.last_key = player.Input;
+                if (player.Input != "W")
+                {
+                    player.last_key = player.Input;
+                }
                 WriteAt("  ", x * 2, y - 1);
                 WriteAt("  ", x * 2, y);
                 WriteAt("  ", 110, 0);
@@ -147,15 +167,26 @@ namespace Minecraft
             switch (player.Input)
             {
                 case "W":
-
-                    if (player.grounded == true)
+                    if (player.grounded == false)
                     {
-                        y -= 2;
+                        if (player.last_key == "D")
+                        {
+                            x += 2;
+                        }
+                        if (player.last_key == "A")
+                        {
+                            x -= 2;
+                        }
+                    }
+                    if (player.grounded == true && grid[player.y - 1, player.x] == 0)
+                    {
+                        y -= 5;
                         //WriteAt("██", x * 2, y - 1);
                         WriteAt("██", x * 2, y);
-                        grid[player.y - 1, player.x] = 0;
+                        //grid[player.y - 1, player.x] = 0;
                         player.grounded = false;
                     }
+                    
 
 
                     break;
@@ -168,13 +199,14 @@ namespace Minecraft
                         WriteAt("██", x * 2, y);
 
                     }
+
                     x--;
 
                     break;
                 case "S":
 
-                    grid[player.y + 1, player.x] = 0;
-                    WriteAt("  ", x * 2, y + 1);
+                    //grid[player.y + 1, player.x] = 0;
+                    //WriteAt("  ", x * 2, y + 1);
                     break;
                 case "D":
 
@@ -184,7 +216,7 @@ namespace Minecraft
                         WriteAt("██", x * 2, y);
 
                     }
-                    else
+                    
                         x++;
                     break;
             }
