@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,8 +30,11 @@ namespace Minecraft
     {
         public int x_size = 30;
         public int y_size = 13;
+        public double time = 0;
+        
+        
 
-    }
+}
 
     class Block_ids(int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
@@ -40,4 +44,9 @@ namespace Minecraft
         public ConsoleColor BG = bG;
     }
     //▀▄░█
+    class Structure
+    {
+        public int[,] Struct;
+        //public void()
+    }
 }
