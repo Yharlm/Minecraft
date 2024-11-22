@@ -1,3 +1,4 @@
+
 //using ConsoleNewMinigame;
 using Minecraft;
 using System;
@@ -46,10 +47,10 @@ namespace Minecraft
             BlockUpdate(grid);
 
             while (true)
-            {
-                string timer = (overworld.time += 0.0002).ToString();
+            { 
+                double timer = Math.Ceiling(overworld.time += 0.0002);
                 Console.ForegroundColor = ConsoleColor.White;
-                WriteAt(timer[0].ToString(), 0, 2);
+                WriteAt(timer.ToString(), 0, 2);
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 GetInput(grid, player);
                 if (grid[player.y + 1, player.x] == 0)
@@ -129,20 +130,47 @@ namespace Minecraft
 
             Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
             Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
+            structure(31, grid,stone);
         }
 
-        static void Structure(int x, int[,] grid)
+        static void structure(int Local_x, int[,] grid,object Block)
         {
-            Structure tree = new Structure();
-            tree.Struct = { 
-                { 1,1},
-                { 1,1} 
+            Block_ids block = (Block_ids)Block;
+            //Structure tree = new Structure();
+
+            int[,] str =
+            {
+                {1,1,1,1 },
+                {1,1,1,1 },
+                {1,1,1,1 },
+                {1,1,1,1 }
             };
+            int x = str.GetLength(1) ;
+            int y = str.GetLength(0) ;
+
+            int Local_y = 0;
+            while (grid[Local_y, Local_x] == 0)
+            {
+                Local_y++;
+            }
+            for (int i = Local_y; i < Local_y + y; i++)
+            {
+                for (int j = Local_x; j < Local_x + x; j++)
+                {
+                    Console.ForegroundColor = block.FG;
+                    Console.BackgroundColor = block.BG;
+                    grid[i, j] = block.id;
+                    WriteAt(block.Texture, j*2,i);
+                    Console.ForegroundColor = default;
+                    Console.BackgroundColor = ConsoleColor.Cyan;
+
+                }
+            }
 
 
         }
 
-        
+
         //static double velocity() 
         private static void GetInput(int[,] grid, object instance)
         {
@@ -163,6 +191,7 @@ namespace Minecraft
                 WriteAt("  ", x * 2, y);
                 WriteAt("  ", 110, 0);
             }
+            else { player.Input = null; }
 
             switch (player.Input)
             {
@@ -186,7 +215,7 @@ namespace Minecraft
                         //grid[player.y - 1, player.x] = 0;
                         player.grounded = false;
                     }
-                    
+
 
 
                     break;
@@ -216,8 +245,8 @@ namespace Minecraft
                         WriteAt("██", x * 2, y);
 
                     }
-                    
-                        x++;
+
+                    x++;
                     break;
             }
             player.Input = null;
