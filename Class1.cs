@@ -31,10 +31,10 @@ namespace Minecraft
         public int x_size = 30;
         public int y_size = 13;
         public double time = 0;
-        
-        
 
-}
+
+
+    }
 
     class Block_ids(int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
@@ -47,6 +47,13 @@ namespace Minecraft
     class Structure
     {
         public int[,] Struct;
-        //public void()
+        public void Fill_Index_Cord(int x1, int y1, int x2, int y2, int[,] grid, int id)
+        {
+
+            
+
+        }
+
+
     }
 }
