@@ -193,7 +193,7 @@ namespace Minecraft
             {
 
                 player.Input = Console.ReadKey().Key.ToString();
-                if (player.Input != "W" && player.Input != "L")
+                if (player.Input != "W" && player.Input != "L" && player.Input != "K")
                 {
                     player.last_key = player.Input;
                 }
@@ -208,7 +208,8 @@ namespace Minecraft
                 case "K":
                     if (player.last_key == "D")
                     {
-                        Fill_block(player.x + 1, player.y, grid, air);
+
+                        Fill_block(player.x - 1, player.y, grid, air);
                     }
                     if (player.last_key == "A")
                     {
@@ -278,8 +279,11 @@ namespace Minecraft
                     break;
                 case "S":
 
-                    grid[player.y + 1, player.x] = 0;
-                    WriteAt("  ", x * 2, y);
+                    if (grid[player.y+1, player.x ] == 0)
+                    {
+
+                        y++;
+                    }
                     break;
                 case "D":
 
