@@ -1,8 +1,5 @@
-
 //using ConsoleNewMinigame;
-using Minecraft;
-using System;
-using System.Numerics;
+using System.Diagnostics;
 
 namespace Minecraft
 {
@@ -47,12 +44,13 @@ namespace Minecraft
             BlockUpdate(grid);
 
             while (true)
-            { 
+            {
                 double timer = Math.Ceiling(overworld.time += 0.0002);
                 Console.ForegroundColor = ConsoleColor.White;
                 WriteAt(timer.ToString(), 0, 2);
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 GetInput(grid, player);
+                GetClick(grid, player);
                 if (grid[player.y + 1, player.x] == 0)
                 {
                     player.grounded = false;
@@ -73,6 +71,21 @@ namespace Minecraft
 
             }
 
+        }
+
+        private static void GetClick(int[,] grid, object instance)
+        {
+            Player player = (Player) instance;
+            if(player.last_key == "A" && player.Input == "M")
+            {
+                if(player.upper_block == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    WriteAt("YK",(player.x-1)*2,player.y);
+                    Console.ForegroundColor = default;
+
+                }
+            }
         }
 
         private static void Console_runE()
@@ -117,52 +130,83 @@ namespace Minecraft
 
         private static void BuildWorld(int[,] grid)
         {
+            ConsoleColor Default = ConsoleColor.Cyan;
             Block_ids air = new Block_ids(0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
             Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
             Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
             Block_ids stone = new Block_ids(3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
-            Block_ids wood = new Block_ids(4, "██", ConsoleColor.DarkRed, ConsoleColor.DarkRed);
+            Block_ids wood = new Block_ids(4, "||", ConsoleColor.DarkYellow, ConsoleColor.Yellow);
             Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
+            Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
 
 
 
+            Structure tree = new Structure();
+            tree.Struct = new int[,]{
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 }
+            };
+            Structure Leaves = new Structure();
+            Leaves.Struct = new int[,]{
+                { 0,1,1,1,0 },
+                { 1,1,1,1,1 },
+                { 1,1,1,1,1 },
+                { 0,0,0,0,0 },
+                { 0,0,0,0,0 }
+            };
 
             Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
             Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
-            structure(31, grid,stone);
+
+            structure(tree,31, grid, wood);
+            structure(Leaves, 31, grid, leaves);
         }
-
-        static void structure(int Local_x, int[,] grid,object Block)
+        
+        static void structure(object struc,int Local_x, int[,] grid, object Block)
         {
+            Structure structure = (Structure)struc;
             Block_ids block = (Block_ids)Block;
-            //Structure tree = new Structure();
 
-            int[,] str =
-            {
-                {1,1,1,1 },
-                {1,1,1,1 },
-                {1,1,1,1 },
-                {1,1,1,1 }
-            };
-            int x = str.GetLength(1) ;
-            int y = str.GetLength(0) ;
-
+            //int[,] str =
+            //{
+            //    {0,0,1,0,0 },
+            //    {0,0,1,0,0 },
+            //    {0,1,1,0,0 },
+            //    {0,0,1,0,0 },
+            //    {0,0,1,0,0 }
+            //};
+            
+            int x = structure.Struct.GetLength(1);
+            int y = structure.Struct.GetLength(0);
+            
             int Local_y = 0;
             while (grid[Local_y, Local_x] == 0)
             {
                 Local_y++;
             }
+            Local_y -= y;
             for (int i = Local_y; i < Local_y + y; i++)
             {
                 for (int j = Local_x; j < Local_x + x; j++)
                 {
-                    Console.ForegroundColor = block.FG;
-                    Console.BackgroundColor = block.BG;
-                    grid[i, j] = block.id;
-                    WriteAt(block.Texture, j*2,i);
-                    Console.ForegroundColor = default;
-                    Console.BackgroundColor = ConsoleColor.Cyan;
+
+
+                    if (structure.Struct[i - Local_y, j - Local_x] == 1 )
+                    {
+
+
+                        Console.ForegroundColor = block.FG;
+                        Console.BackgroundColor = block.BG;
+                        grid[i, j] = block.id;
+                        WriteAt(block.Texture, j * 2, i);
+                        Console.ForegroundColor = default;
+                        Console.BackgroundColor = ConsoleColor.Cyan;
+                    }
+                    
 
                 }
             }
@@ -183,7 +227,7 @@ namespace Minecraft
             {
 
                 player.Input = Console.ReadKey().Key.ToString();
-                if (player.Input != "W")
+                if (player.Input != "W" || player.Input !="M")
                 {
                     player.last_key = player.Input;
                 }
@@ -195,6 +239,24 @@ namespace Minecraft
 
             switch (player.Input)
             {
+                case "M":
+                    {
+                        if (player.last_key == "A" || player.Input == "M")
+                        {
+                            if (player.upper_block == false)
+                            {
+                                Console.ForegroundColor = ConsoleColor.DarkGray;
+                                WriteAt("  ", (player.x - 1) * 2, player.y);
+                                Console.ForegroundColor = default;
+
+                            }
+                            else if (player.upper_block == true)
+                            {
+
+                            }
+                        }
+                        break;
+                    }
                 case "W":
                     if (player.grounded == false)
                     {
@@ -207,7 +269,7 @@ namespace Minecraft
                             x -= 2;
                         }
                     }
-                    if (player.grounded == true && grid[player.y - 1, player.x] == 0)
+                    if (player.grounded == true && grid[player.y - 2, player.x] == 0)
                     {
                         y -= 5;
                         //WriteAt("██", x * 2, y - 1);
@@ -229,8 +291,10 @@ namespace Minecraft
 
                     }
 
-                    x--;
-
+                    if (grid[player.y, player.x - 1] == 0)
+                    {
+                        x--;
+                    }
                     break;
                 case "S":
 
@@ -246,7 +310,10 @@ namespace Minecraft
 
                     }
 
-                    x++;
+                    if (grid[player.y, player.x + 1] == 0)
+                    {
+                        x++;
+                    }
                     break;
             }
             player.Input = null;
