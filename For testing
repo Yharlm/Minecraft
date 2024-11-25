@@ -8,8 +8,8 @@ namespace Minecraft
 {
     class Program
     {
-        
-        
+
+
 
         protected static int origRow;
         protected static int origCol;
@@ -119,60 +119,89 @@ namespace Minecraft
 
         private static void BuildWorld(int[,] grid)
         {
-            Game game = new Game();
+            ConsoleColor Default = ConsoleColor.Cyan;
             Block_ids air = new Block_ids(0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
             Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
             Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
             Block_ids stone = new Block_ids(3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
-            Block_ids wood = new Block_ids(4, "██", ConsoleColor.DarkRed, ConsoleColor.DarkRed);
+            Block_ids wood = new Block_ids(4, "||", ConsoleColor.DarkYellow, ConsoleColor.Yellow);
             Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
+            Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
 
 
 
+            Structure tree = new Structure();
+            tree.Struct = new int[,]{
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 },
+                { 0,0,1,0,0 }
+            };
+            Structure Leaves = new Structure();
+            Leaves.Struct = new int[,]{
+                { 0,1,1,1,0 },
+                { 1,1,1,1,1 },
+                { 1,1,1,1,1 },
+                { 0,0,0,0,0 },
+                { 0,0,0,0,0 }
+            };
 
             Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
             Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
-            structure(31, grid, stone);
+
+            structure(tree, 31, grid, wood);
+            structure(Leaves, 31, grid, leaves);
         }
 
-        static void structure(int Local_x, int[,] grid, object Block)
+        static void structure(object struc, int Local_x, int[,] grid, object Block)
         {
+            Structure structure = (Structure)struc;
             Block_ids block = (Block_ids)Block;
-            //Structure tree = new Structure();
 
-            int[,] str =
-            {
-                {1,1,1,1 },
-                {1,1,1,1 },
-                {1,1,1,1 },
-                {1,1,1,1 }
-            };
-            int x = str.GetLength(1);
-            int y = str.GetLength(0);
+            //int[,] str =
+            //{
+            //    {0,0,1,0,0 },
+            //    {0,0,1,0,0 },
+            //    {0,1,1,0,0 },
+            //    {0,0,1,0,0 },
+            //    {0,0,1,0,0 }
+            //};
+
+            int x = structure.Struct.GetLength(1);
+            int y = structure.Struct.GetLength(0);
 
             int Local_y = 0;
             while (grid[Local_y, Local_x] == 0)
             {
                 Local_y++;
             }
+            Local_y -= y;
             for (int i = Local_y; i < Local_y + y; i++)
             {
                 for (int j = Local_x; j < Local_x + x; j++)
                 {
-                    Console.ForegroundColor = block.FG;
-                    Console.BackgroundColor = block.BG;
-                    grid[i, j] = block.id;
-                    WriteAt(block.Texture, j * 2, i);
-                    Console.ForegroundColor = default;
-                    Console.BackgroundColor = ConsoleColor.Cyan;
+
+
+                    if (structure.Struct[i - Local_y, j - Local_x] == 1)
+                    {
+
+
+                        Console.ForegroundColor = block.FG;
+                        Console.BackgroundColor = block.BG;
+                        grid[i, j] = block.id;
+                        WriteAt(block.Texture, j * 2, i);
+                        Console.ForegroundColor = default;
+                        Console.BackgroundColor = ConsoleColor.Cyan;
+                    }
+
 
                 }
             }
 
 
         }
-
 
         //static double velocity() 
         private static void GetInput(int[,] grid, object instance)
@@ -215,9 +244,9 @@ namespace Minecraft
                     {
                         Fill_block(player.x - 1, player.y, grid, air);
                     }
-                    if(player.last_key == "S")
+                    if (player.last_key == "S")
                     {
-                        Fill_block(player.x , player.y+1, grid, air);
+                        Fill_block(player.x, player.y + 1, grid, air);
                     }
                     if (player.last_key == "W")
                     {
@@ -225,9 +254,9 @@ namespace Minecraft
                     }
                     break;
                 case "L":
-                    if(player.last_key == "D")
+                    if (player.last_key == "D")
                     {
-                        Fill_block(player.x+1, player.y,grid,stone);
+                        Fill_block(player.x + 1, player.y, grid, stone);
                     }
                     if (player.last_key == "A")
                     {
@@ -279,7 +308,7 @@ namespace Minecraft
                     break;
                 case "S":
 
-                    if (grid[player.y+1, player.x ] == 0)
+                    if (grid[player.y + 1, player.x] == 0)
                     {
 
                         y++;
@@ -293,9 +322,9 @@ namespace Minecraft
                         WriteAt("██", x * 2, y);
 
                     }
-                    if (grid[player.y, player.x+1] == 0)
+                    if (grid[player.y, player.x + 1] == 0)
                     {
-                        
+
                         x++;
                     }
                     break;
@@ -349,7 +378,7 @@ namespace Minecraft
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
 
-        static void Fill_block(int x , int y, int[,] grid, Block_ids Block)
+        static void Fill_block(int x, int y, int[,] grid, Block_ids Block)
         {
             Console.ForegroundColor = Block.FG;
             Console.BackgroundColor = Block.BG;
