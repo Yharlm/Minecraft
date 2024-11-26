@@ -301,6 +301,7 @@ namespace Minecraft
 
                     break;
                 case "L":
+                    
                     if (player.last_key == "D")
                     {
                         if (grid[player.y + 1, player.x + 1] == 0)
@@ -319,7 +320,12 @@ namespace Minecraft
                         else if (grid[player.y - 1, player.x - 1] == 0)
                             Fill_block(player.x - 1, player.y - 1, grid, stone);
                     }
-                    break;
+                    if (player.special_key == "W")
+                        if (grid[player.y + 1, player.x] == 0)
+                        {
+                            Fill_block(player.x, player.y + 1, grid, stone);
+                        }
+                            break;
                 case "W":
                     if (player.grounded == false)
                     {
