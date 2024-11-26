@@ -57,14 +57,22 @@ namespace Minecraft
                 GetInput(grid, player);
                 if (grid[player.y + 1, player.x] == 0)
                 {
+                    Thread.Sleep(100);
+                    if (grid[player.y - 2, player.x] == 0)
+                    {
+                        WriteAt("  ", player.x * 2, player.y - 1);
+                    }
+                    WriteAt("  ", player.x * 2, player.y - 1);
+                    
+                    player.y++;
                     player.grounded = false;
                     Console.ForegroundColor = ConsoleColor.White;
-                    WriteAt("  ", player.x * 2, player.y - 1);
+                    
                     //WriteAt("  ", player.x * 2, player.y);
 
                     Console.ForegroundColor = ConsoleColor.Cyan;
-                    ++player.y;
-                    Thread.Sleep(100);
+                    
+                    //Thread.Sleep(100);
 
 
                 }
@@ -147,21 +155,22 @@ namespace Minecraft
                 { 0,0,0,0,0 },
                 { 0,0,0,0,0 }
             };
-            Structure House = new Structure();
-            Leaves.Struct = new int[,]{
-                { 1,1,1,1,1,1,1 },
-                { 1,0,0,0,0,0,1 },
-                { 1,0,0,0,0,0,1 },
-                { 1,0,0,0,0,0,1 },
-                { 1,0,0,0,0,0,1 }
-            };
+            //Structure House = new Structure();
+            //Leaves.Struct = new int[,]{
+            //    { 1,1,1,1,1 },
+            //    { 1,0,0,0,1 },
+            //    { 1,0,0,0,1 },
+            //    { 1,0,0,0,1 },
+            //    { 1,0,0,0,1 }
+            //};
 
 
             Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
             Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
 
-            structure(tree, 31, grid, wood);
-            structure(Leaves, 31, grid, leaves);
+            structure(tree, 11, grid, wood);
+            structure(Leaves, 11, grid, leaves);
+            //structure(House, 51, grid, stone);
         }
 
         static void structure(object struc, int Local_x, int[,] grid, object Block)
@@ -294,43 +303,59 @@ namespace Minecraft
                 case "L":
                     if (player.last_key == "D")
                     {
-                        if(grid[player.y + 1, player.x + 1] == 0)
-                        Fill_block(player.x + 1, player.y+1, grid, stone);
+                        if (grid[player.y + 1, player.x + 1] == 0)
+                            Fill_block(player.x + 1, player.y + 1, grid, stone);
                         else if (grid[player.y, player.x + 1] == 0)
-                        Fill_block(player.x + 1, player.y, grid, stone);
-                        else if (grid[player.y-1, player.x + 1] == 0)
-                        Fill_block(player.x + 1, player.y-1, grid, stone);
+                            Fill_block(player.x + 1, player.y, grid, stone);
+                        else if (grid[player.y - 1, player.x + 1] == 0)
+                            Fill_block(player.x + 1, player.y - 1, grid, stone);
                     }
                     if (player.last_key == "A")
                     {
-                        Fill_block(player.x - 1, player.y, grid, stone);
+                        if (grid[player.y + 1, player.x - 1] == 0)
+                            Fill_block(player.x - 1, player.y + 1, grid, stone);
+                        else if (grid[player.y, player.x - 1] == 0)
+                            Fill_block(player.x - 1, player.y, grid, stone);
+                        else if (grid[player.y - 1, player.x - 1] == 0)
+                            Fill_block(player.x - 1, player.y - 1, grid, stone);
                     }
                     break;
                 case "W":
                     if (player.grounded == false)
                     {
-                        if (player.last_key == "D")
-                        {
-                            x += 2;
-                        }
-                        if (player.last_key == "A")
-                        {
-                            x -= 2;
-                        }
+                        //if (player.last_key == "D")
+                        //{
+                        //    x += 2;
+                        //}
+                        //if (player.last_key == "A")
+                        //{
+                        //    x -= 2;
+                        //}
                     }
-                    
                     if (player.grounded == true && grid[player.y - 3, player.x] == 0)
                     {
-                        y -= 1;
+                        y -= 2;
                         //WriteAt("██", x * 2, y - 1);
-                        WriteAt("██", x * 2, y);
+                        //WriteAt("██", x * 2, y);
                         //grid[player.y - 1, player.x] = 0;
                         player.grounded = false;
                     }
+                    else if (player.grounded == true && grid[player.y - 2, player.x] == 0)
+                    {
+                        y -= 1;
+                        //WriteAt("██", x * 2, y - 1);
+                        //WriteAt("██", x * 2, y);
+                        //grid[player.y - 1, player.x] = 0;
+                        player.grounded = false;
+                    }
+                    else if (player.grounded == true && grid[player.y - 1, player.x] == 0)
+                    {
+                        
+                    }
 
 
 
-                    break;
+                        break;
                 case "A":
 
 
