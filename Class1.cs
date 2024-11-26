@@ -9,7 +9,8 @@ namespace Minecraft
 {
     class Player : cordinates
     {
-        public Block_ids Selected_block;
+        public int hotbar;
+        public Block_ids Selected_block = null;
         public string special_key = "";
         public string last_key = "";
         public string Input = "";
@@ -27,7 +28,7 @@ namespace Minecraft
         {
             Block_ids item = (Block_ids)block;
             int index = item.id;
-            
+
         }
     }
     class cordinates
@@ -66,6 +67,6 @@ namespace Minecraft
 
         }
     }
-    
+
 
 }
