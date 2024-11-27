@@ -9,7 +9,7 @@ namespace Minecraft
     class Program
     {
 
-        
+
 
         protected static int origRow;
         protected static int origCol;
@@ -36,17 +36,34 @@ namespace Minecraft
             Console.BackgroundColor = ConsoleColor.Cyan;
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
-            WriteAt("Minecraft v0.0.2, now with grass", 1, 1);
+            WriteAt("Minecraft v0.0.2.5, now with Inventory... sort of", 1, 1);
             Console.ForegroundColor = default;
 
             Game overworld = new Game();
             Player player = new Player();
+
+
+            //Block_ids air = new Block_ids(0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
+            //Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
+            //Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
+            //Block_ids stone = new Block_ids(3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
+            //Block_ids wood = new Block_ids(4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow);
+            //Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
+            //Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
+            //Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
+            Solid Default = new Solid("null", 0, null, default, default);
+
+            Default = new Solid("air", 0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan); player.Block_list.Add(Default);
+            Default = new Solid("Grass", 1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
+            Default = new Solid("Dirt", 2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
+            Default = new Solid("Stone",3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray); player.Block_list.Add(Default);
+            Default = new Solid("Log", 4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
             //Move this to the block method using switch case or make a new class block
 
 
             int[,] grid = new int[player.y_size, player.x_size];
             BuildWorld(grid);
-            
+
 
             while (true)
             {
@@ -74,7 +91,7 @@ namespace Minecraft
                     //WriteAt("  ", player.x * 2, player.y);
 
                     Console.ForegroundColor = ConsoleColor.Cyan;
-                    
+
                     //Thread.Sleep(100);
 
 
@@ -124,7 +141,7 @@ namespace Minecraft
                 int water_level = 0;
                 for (int j = 0; j < grid.GetLength(1); j++)
                 {
-                    if (grid[i, j] == 5 || grid[i, j] == 6 && grid[i+1, j] == 0)
+                    if (grid[i, j] == 5 || grid[i, j] == 6 && grid[i + 1, j] == 0)
                     {
                         Fill_block(j, i + 1, grid, water);
                     }
@@ -174,12 +191,12 @@ namespace Minecraft
 
             Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
             Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
-
+            Fill_block(54, 6, grid, water);
             structure(tree, 11, grid, wood);
             structure(Leaves, 11, grid, leaves);
             structure(House, 31, grid, stone);
         }
-
+        
         static void structure(object struc, int Local_x, int[,] grid, object Block)
         {
             Structure structure = (Structure)struc;
@@ -231,7 +248,8 @@ namespace Minecraft
         //static double velocity() 
         private static void GetInput(int[,] grid, object instance)
         {
-            Block_ids air = new Block_ids(0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
+            
+            Block_ids air = new Block_ids(0, "  ", default, ConsoleColor.Cyan);
             Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
             Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
             Block_ids stone = new Block_ids(3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
@@ -239,8 +257,19 @@ namespace Minecraft
             Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
+            
 
             Player player = (Player)instance;
+
+            
+
+
+
+
+
+
+
+            
             grid[player.y, player.x] = 0;
             int x = player.x;
             int y = player.y;
@@ -257,6 +286,16 @@ namespace Minecraft
                 {
                     player.special_key = "W";
                 }
+                //if(grid[player.y - 1, player.x + 1] == 5)
+                //{
+                //    Fill_block(x, y,grid,water);
+                //    Fill_block(x, y-1, grid, water);
+                //}
+                //else if(grid[player.y - 1, player.x + 1] == 0)
+                //{
+                //    Fill_block(x, y, grid, air);
+                //    Fill_block(x, y - 1, grid, air);
+                //}
 
                 WriteAt("  ", x * 2, y - 1);
                 WriteAt("  ", x * 2, y);
@@ -282,7 +321,7 @@ namespace Minecraft
                             player.Selected_block = wood; WriteAt("Wood     ", 55, 2);
                             break;
                         case 3:
-                            player.Selected_block = stone;  WriteAt("Stone    ", 55, 2);
+                            player.Selected_block = stone; WriteAt("Stone    ", 55, 2);
                             break;
                         case 4:
                             player.Selected_block = waterTop; WriteAt("Water     ", 55, 2);
@@ -290,9 +329,9 @@ namespace Minecraft
 
                     }
                     Console.ForegroundColor = default;
-                    if (player.hotbar == 5) player.hotbar = 1;
-                        
-                   
+                    if (player.hotbar == 5) player.hotbar = 0;
+
+
                     break;
                 case "K":
                     if (player.special_key == "W")
@@ -300,7 +339,7 @@ namespace Minecraft
                         if (player.special_key == "W")
                         {
                             Fill_block(player.x, player.y - 2, grid, air); player.special_key = null;
-                            
+
                         }
                         else if (player.last_key == "D")
                         {
@@ -503,6 +542,8 @@ namespace Minecraft
             Console.ForegroundColor = default;
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
+
+        
 
     }
 }
