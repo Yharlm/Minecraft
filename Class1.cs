@@ -9,6 +9,8 @@ namespace Minecraft
 {
     class Player : cordinates
     {
+        public List<Solid> Block_list = new List<Solid>();
+        public bool is_swiming = false;
         public int hotbar;
         public Block_ids Selected_block = null;
         public string special_key = "";
@@ -22,14 +24,7 @@ namespace Minecraft
     }
     class Inventory : Player
     {
-        private int[] inventory = new int[4];
-        public Block_ids Selected_block;
-        public void addItem(object block)
-        {
-            Block_ids item = (Block_ids)block;
-            int index = item.id;
-
-        }
+        //public List<Solid> Block_list = new List<Solid>();
     }
     class cordinates
     {
@@ -56,6 +51,21 @@ namespace Minecraft
         public ConsoleColor FG = fG;
         public ConsoleColor BG = bG;
     }
+    class Solid(string name,int Id, string texture, ConsoleColor fG, ConsoleColor bG) 
+    {
+        public string Name = name;
+        public int id = Id;
+        public string Texture = texture;
+        public ConsoleColor FG = fG;
+        public ConsoleColor BG = bG;
+    }
+    class Non_solid(int Id, string texture, ConsoleColor fG, ConsoleColor bG)
+    {
+        public int id = Id;
+        public string Texture = texture;
+        public ConsoleColor FG = fG;
+        public ConsoleColor BG = bG;
+    }
     //▀▄░█
     class Structure
     {
@@ -67,6 +77,28 @@ namespace Minecraft
 
         }
     }
+    internal class Behaviour
+    {
+        class pig : Behaviour
+        {
+            
+        }
+        public void Walk_around()
+        {
+            //code here lol
+        }
+        public void Walk_To_player(int speed)
+        {
+            //code here lol
+        }
+        public void Shoot_WithImaginaryProjectiles()
+        {
 
+        }
 
+    }
+    class Entity(string name, int Health,Behaviour type)
+    {
+
+    }
 }
