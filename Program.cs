@@ -29,7 +29,7 @@ namespace Minecraft
         }
         static void Main(string[] args)
         {
-            Console_runE();
+            //Console_runE();
 
 
             Console.CursorVisible = false;
@@ -52,31 +52,43 @@ namespace Minecraft
             //Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             //Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
             Solid Default = new Solid("null", 0, null, default, default);
-            Non_solid Background = new Non_Solid("", 0, null, default, default);
+            Non_solid Background = new Non_solid("", 0, null, default, default);
 
             Default = new Solid("air", 0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan); player.Block_list.Add(Default);
             Default = new Solid("Grass", 1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
             Default = new Solid("Dirt", 2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
-            Default = new Solid("Stone",3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray); player.Block_list.Add(Default);
-            Default = new Solid("Log",4, "||", ConsoleColor.DarkYellow, ConsoleColor.Yellow); player.Block_list.Add(Default);
-            Background = new non_Solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_Back_list.Add(Backround);
+            Default = new Solid("Stone", 3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray); player.Block_list.Add(Default);
+            Default = new Solid("Log", 4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
+            Background = new Non_solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_Back_list.Add(Background);
             Default = new Solid("waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
             Default = new Solid("Leaves", 7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green); player.Block_list.Add(Default);
             //Move this to the block method using switch case or make a new class block
 
 
             int[,] grid = new int[player.y_size, player.x_size];
-            BuildWorld(grid,player);
-
+            BuildWorld(grid, player);
+            int tick = 1 / 10;
 
             while (true)
             {
-                double timer = Math.Ceiling(overworld.time += 0.0002);
+                //double timer = Math.Ceiling(overworld.time += 0.0002);
+                double timer = overworld.time += 0.0002;
+                if (timer >= tick)
+                {
+                    overworld.time = 0;
+                    overworld.curent_tick = true;
+                }
+                else
+                {
+                    overworld.curent_tick = false;
+                }
                 Console.ForegroundColor = ConsoleColor.White;
                 WriteAt(timer.ToString(), 0, 2);
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 GetInput(grid, player);
-                BlockUpdate(grid, player);
+                
+                BlockUpdate(grid, player,overworld);
+                
                 cordinates PlayerPos = new cordinates();
 
                 if (grid[player.y + 1, player.x] == 0)
@@ -109,28 +121,31 @@ namespace Minecraft
 
         }
 
+        
+
         private static void Console_runE()
         {
             int[] arr = { 1, 2, 3, 3, 3, 4, 5, 4, 3, 3, 4 };
             int counter = 0;
-              
+
             for (int i = 1; i < arr.Length; i++)
             {
                 if (arr[i] == arr[i - 1]) { counter++; }
                 else
                 {
-                    
-                   
+
+
                 }
                 Console.WriteLine(counter);
             }
             Console.ReadLine();
-            
-            
+
+
         }
 
-        private static void BlockUpdate(int[,] grid,object plr)
+        private static void BlockUpdate(int[,] grid, object plr,object instance)
         {
+            Game game = (Game)instance;
             Player player = (Player)plr;
             Block_ids water = new Block_ids(6, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             for (int i = 0; i < grid.GetLength(0); i++)
@@ -138,17 +153,19 @@ namespace Minecraft
                 int water_level = 0;
                 for (int j = 0; j < grid.GetLength(1); j++)
                 {
-                    if (grid[i, j] == 5 || grid[i, j] == 6 && grid[i + 1, j] == 0)
+                    if (grid[i, j] == 5 || grid[i, j] == 6 && grid[i + 1, j] == 0 && game.curent_tick == true)
                     {
+                        
                         Fill_block(j, i + 1, grid, player.Block_list[5]);
+                        game.curent_tick = false;
                     }
                 }
             }
         }
 
-        private static void BuildWorld(int[,] grid,object instance)
+        private static void BuildWorld(int[,] grid, object instance)
         {
-            Player player = (Player) instance;
+            Player player = (Player)instance;
             ConsoleColor Default = ConsoleColor.Cyan;
             Block_ids air = new Block_ids(0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
             Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
@@ -194,7 +211,7 @@ namespace Minecraft
             structure(Leaves, 11, grid, leaves);
             structure(House, 31, grid, stone);
         }
-        
+
         static void structure(object struc, int Local_x, int[,] grid, object Block)
         {
             Structure structure = (Structure)struc;
@@ -246,7 +263,7 @@ namespace Minecraft
         //static double velocity() 
         private static void GetInput(int[,] grid, object instance)
         {
-            
+
             //Block_ids air = new Block_ids(0, "  ", default, ConsoleColor.Cyan);
             //Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
             //Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
@@ -255,7 +272,7 @@ namespace Minecraft
             //Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             //Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             //Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
-            
+
 
             Player player = (Player)instance;
 
@@ -308,10 +325,10 @@ namespace Minecraft
                 case "E":
                     player.hotbar++;
                     Console.ForegroundColor = ConsoleColor.Red;
-                    
-                            player.Selected_block = player.Block_list[player.hotbar]; WriteAt( player.Selected_block.Name +"    ", 55, 2);
+
+                    player.Selected_block = player.Block_list[player.hotbar]; WriteAt(player.Selected_block.Name + "    ", 55, 2);
                     Console.ForegroundColor = default;
-                    if (player.hotbar == player.Block_list.Count-1) player.hotbar = 0;
+                    if (player.hotbar == player.Block_list.Count - 1) player.hotbar = 0;
 
 
                     break;
@@ -441,6 +458,14 @@ namespace Minecraft
 
                         x--;
                     }
+                    if(grid[player.y - 1, player.x - 1] == 6)
+                            {
+                        x--; player.is_swiming = true;
+                    }
+                    else
+                    {
+                        player.is_swiming = false;
+                    }    
 
                     break;
                 case "S":
@@ -463,6 +488,14 @@ namespace Minecraft
                     {
 
                         x++;
+                    }
+                    if (grid[player.y - 1, player.x + 1] == 6)
+                    {
+                        x++; player.is_swiming = true;
+                    }
+                    else
+                    {
+                        player.is_swiming = false;
                     }
                     break;
             }
@@ -523,6 +556,11 @@ namespace Minecraft
             WriteAt(Block.Texture, x * 2, y);
             Console.ForegroundColor = default;
             Console.BackgroundColor = ConsoleColor.Cyan;
+        }
+
+        static void Entity_update(Entity entity)
+        {
+
         }
 
         
