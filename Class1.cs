@@ -65,7 +65,7 @@ namespace Minecraft
         public ConsoleColor FG = fG;
         public ConsoleColor BG = bG;
     }
-    class Non_solid(string name,int Id, string texture, ConsoleColor fG, ConsoleColor bG)
+    class Non_solid(string name, int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
         public int id = Id;
         public string Texture = texture;
