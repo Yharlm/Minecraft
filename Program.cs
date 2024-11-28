@@ -60,6 +60,8 @@ namespace Minecraft
             Default = new Solid("Stone", 3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray); player.Block_list.Add(Default);
             Default = new Solid("Log", 4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
             Background = new Non_solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_Back_list.Add(Background);
+            //Default = new Solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
+
             Default = new Solid("waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
             Default = new Solid("Leaves", 7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green); player.Block_list.Add(Default);
             //Move this to the block method using switch case or make a new class block
@@ -67,28 +69,31 @@ namespace Minecraft
 
             int[,] grid = new int[player.y_size, player.x_size];
             BuildWorld(grid, player);
-            int tick = 1 / 10;
+            double tick = 0.5;
 
             while (true)
             {
                 //double timer = Math.Ceiling(overworld.time += 0.0002);
                 double timer = overworld.time += 0.0002;
-                if (timer >= tick)
+                if (overworld.time >= tick)
                 {
-                    overworld.time = 0;
+                    
                     overworld.curent_tick = true;
+                    overworld.time = 0;
+
                 }
                 else
                 {
+                    
                     overworld.curent_tick = false;
                 }
                 Console.ForegroundColor = ConsoleColor.White;
                 WriteAt(timer.ToString(), 0, 2);
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 GetInput(grid, player);
-                
-                BlockUpdate(grid, player,overworld);
-                
+
+                BlockUpdate(grid, player, overworld);
+
                 cordinates PlayerPos = new cordinates();
 
                 if (grid[player.y + 1, player.x] == 0)
@@ -121,7 +126,7 @@ namespace Minecraft
 
         }
 
-        
+
 
         private static void Console_runE()
         {
@@ -143,8 +148,9 @@ namespace Minecraft
 
         }
 
-        private static void BlockUpdate(int[,] grid, object plr,object instance)
+        private static void BlockUpdate(int[,] grid, object plr, object instance)
         {
+            //each frame one plock gets updated only, fix this by updating every block at once per frame idk
             Game game = (Game)instance;
             Player player = (Player)plr;
             Block_ids water = new Block_ids(6, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
@@ -155,7 +161,7 @@ namespace Minecraft
                 {
                     if (grid[i, j] == 5 || grid[i, j] == 6 && grid[i + 1, j] == 0 && game.curent_tick == true)
                     {
-                        
+
                         Fill_block(j, i + 1, grid, player.Block_list[5]);
                         game.curent_tick = false;
                     }
@@ -458,14 +464,14 @@ namespace Minecraft
 
                         x--;
                     }
-                    if(grid[player.y - 1, player.x - 1] == 6)
-                            {
+                    if (grid[player.y - 1, player.x - 1] == 6)
+                    {
                         x--; player.is_swiming = true;
                     }
                     else
                     {
                         player.is_swiming = false;
-                    }    
+                    }
 
                     break;
                 case "S":
@@ -563,7 +569,7 @@ namespace Minecraft
 
         }
 
-        
+
 
     }
 }
