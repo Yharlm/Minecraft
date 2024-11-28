@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 namespace Minecraft
 {
     class Player : cordinates
+    
     {
+    
+        public List<Non_Solid> Wall_list = new List<Non_Solid>();
         public List<Solid> Block_list = new List<Solid>();
         public bool is_swiming = false;
         public int hotbar;
