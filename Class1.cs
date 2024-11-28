@@ -12,7 +12,8 @@ namespace Minecraft
         public List<Solid> Block_list = new List<Solid>();
         public bool is_swiming = false;
         public int hotbar;
-        public Block_ids Selected_block = null;
+        //public Block_ids Selected_block = null;
+        public Solid Selected_block = null;
         public string special_key = "";
         public string last_key = "";
         public string Input = "";
