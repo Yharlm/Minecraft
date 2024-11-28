@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,10 +9,10 @@ using System.Threading.Tasks;
 namespace Minecraft
 {
     class Player : cordinates
-    
+
     {
-    
-        public List<Non_Solid> Wall_list = new List<Non_Solid>();
+
+        public List<Non_solid> Block_Back_list = new List<Non_solid>();
         public List<Solid> Block_list = new List<Solid>();
         public bool is_swiming = false;
         public int hotbar;
@@ -25,6 +26,7 @@ namespace Minecraft
         public int x_size = 70;
         public int y_size = 34;
         public bool grounded = false;
+
     }
     class Inventory : Player
     {
@@ -43,7 +45,7 @@ namespace Minecraft
         public int x_size = 30;
         public int y_size = 13;
         public double time = 0;
-
+        public bool curent_tick = false;
 
 
     }
@@ -55,7 +57,7 @@ namespace Minecraft
         public ConsoleColor FG = fG;
         public ConsoleColor BG = bG;
     }
-    class Solid(string name,int Id, string texture, ConsoleColor fG, ConsoleColor bG) 
+    class Solid(string name, int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
         public string Name = name;
         public int id = Id;
@@ -63,7 +65,7 @@ namespace Minecraft
         public ConsoleColor FG = fG;
         public ConsoleColor BG = bG;
     }
-    class Non_solid(int Id, string texture, ConsoleColor fG, ConsoleColor bG)
+    class Non_solid(string name,int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
         public int id = Id;
         public string Texture = texture;
@@ -85,7 +87,7 @@ namespace Minecraft
     {
         class pig : Behaviour
         {
-            
+
         }
         public void Walk_around()
         {
@@ -101,7 +103,7 @@ namespace Minecraft
         }
 
     }
-    class Entity(string name, int Health,Behaviour type)
+    class Entity(string name, int Health, Behaviour type)
     {
 
     }
