@@ -29,7 +29,7 @@ namespace Minecraft
         }
         static void Main(string[] args)
         {
-            //Console_runE();
+            Console_runE();
 
 
             Console.CursorVisible = false;
@@ -57,12 +57,14 @@ namespace Minecraft
             Default = new Solid("Grass", 1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
             Default = new Solid("Dirt", 2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
             Default = new Solid("Stone",3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray); player.Block_list.Add(Default);
-            Default = new Solid("Log", 4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
+            Default = new Solid("water", 5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
+            Default = new Solid("waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
+            Default = new Solid("Leaves", 7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green); player.Block_list.Add(Default);
             //Move this to the block method using switch case or make a new class block
 
 
             int[,] grid = new int[player.y_size, player.x_size];
-            BuildWorld(grid);
+            BuildWorld(grid,player);
 
 
             while (true)
@@ -72,7 +74,7 @@ namespace Minecraft
                 WriteAt(timer.ToString(), 0, 2);
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 GetInput(grid, player);
-                BlockUpdate(grid);
+                BlockUpdate(grid, player);
                 cordinates PlayerPos = new cordinates();
 
                 if (grid[player.y + 1, player.x] == 0)
@@ -107,34 +109,27 @@ namespace Minecraft
 
         private static void Console_runE()
         {
-
-
-            int n = int.Parse(Console.ReadLine());
-            double[] p = new double[5];
-            int input;
-            for (int i = 0; i < n; i++)
+            int[] arr = { 1, 2, 3, 3, 3, 4, 5, 4, 3, 3, 4 };
+            int counter = 0;
+              
+            for (int i = 1; i < arr.Length; i++)
             {
-                input = int.Parse(Console.ReadLine());
-
-                if (input < 200) p[0]++;
-                else if (input <= 399) p[1]++;
-                else if (input <= 599) p[2]++;
-                else if (input <= 799) p[3]++;
-                else if (input >= 800) p[4]++;
-            }
-            int PNum = 1;
-            foreach (double i in p)
-            {
-                double result = i / n;
-                result = result * 100;
-                Console.WriteLine("P" + PNum + ":" + result);
-                PNum++;
+                if (arr[i] == arr[i - 1]) { counter++; }
+                else
+                {
+                    
+                   
+                }
+                Console.WriteLine(counter);
             }
             Console.ReadLine();
+            
+            
         }
 
-        private static void BlockUpdate(int[,] grid)
+        private static void BlockUpdate(int[,] grid,object plr)
         {
+            Player player = (Player)plr;
             Block_ids water = new Block_ids(6, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             for (int i = 0; i < grid.GetLength(0); i++)
             {
@@ -143,14 +138,15 @@ namespace Minecraft
                 {
                     if (grid[i, j] == 5 || grid[i, j] == 6 && grid[i + 1, j] == 0)
                     {
-                        Fill_block(j, i + 1, grid, water);
+                        Fill_block(j, i + 1, grid, player.Block_list[5]);
                     }
                 }
             }
         }
 
-        private static void BuildWorld(int[,] grid)
+        private static void BuildWorld(int[,] grid,object instance)
         {
+            Player player = (Player) instance;
             ConsoleColor Default = ConsoleColor.Cyan;
             Block_ids air = new Block_ids(0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
             Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
@@ -191,7 +187,7 @@ namespace Minecraft
 
             Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
             Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
-            Fill_block(54, 6, grid, water);
+            Fill_block(54, 6, grid, player.Block_list[5]);
             structure(tree, 11, grid, wood);
             structure(Leaves, 11, grid, leaves);
             structure(House, 31, grid, stone);
@@ -249,19 +245,19 @@ namespace Minecraft
         private static void GetInput(int[,] grid, object instance)
         {
             
-            Block_ids air = new Block_ids(0, "  ", default, ConsoleColor.Cyan);
-            Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
-            Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
-            Block_ids stone = new Block_ids(3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
-            Block_ids wood = new Block_ids(4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow);
-            Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
-            Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
-            Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
+            //Block_ids air = new Block_ids(0, "  ", default, ConsoleColor.Cyan);
+            //Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
+            //Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
+            //Block_ids stone = new Block_ids(3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
+            //Block_ids wood = new Block_ids(4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow);
+            //Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
+            //Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
+            //Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
             
 
             Player player = (Player)instance;
 
-            
+            Solid air = player.Block_list[0];
 
 
 
@@ -269,7 +265,8 @@ namespace Minecraft
 
 
 
-            
+
+
             grid[player.y, player.x] = 0;
             int x = player.x;
             int y = player.y;
@@ -309,27 +306,10 @@ namespace Minecraft
                 case "E":
                     player.hotbar++;
                     Console.ForegroundColor = ConsoleColor.Red;
-                    switch (player.hotbar)
-                    {
-                        case 5:
-                            player.Selected_block = Grass; WriteAt("Grass     ", 55, 2);
-                            break;
-                        case 1:
-                            player.Selected_block = dirt; WriteAt("Dirt     ", 55, 2);
-                            break;
-                        case 2:
-                            player.Selected_block = wood; WriteAt("Wood     ", 55, 2);
-                            break;
-                        case 3:
-                            player.Selected_block = stone; WriteAt("Stone    ", 55, 2);
-                            break;
-                        case 4:
-                            player.Selected_block = waterTop; WriteAt("Water     ", 55, 2);
-                            break;
-
-                    }
+                    
+                            player.Selected_block = player.Block_list[player.hotbar]; WriteAt( player.Selected_block.Name +"    ", 55, 2);
                     Console.ForegroundColor = default;
-                    if (player.hotbar == 5) player.hotbar = 0;
+                    if (player.hotbar == player.Block_list.Count-1) player.hotbar = 0;
 
 
                     break;
@@ -533,7 +513,7 @@ namespace Minecraft
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
 
-        static void Fill_block(int x, int y, int[,] grid, Block_ids Block)
+        static void Fill_block(int x, int y, int[,] grid, Solid Block)
         {
             Console.ForegroundColor = Block.FG;
             Console.BackgroundColor = Block.BG;
