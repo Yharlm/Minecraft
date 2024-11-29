@@ -16,6 +16,7 @@ namespace Minecraft
 
         public List<Non_solid> Block_Back_list = new List<Non_solid>();
         public List<Solid> Block_list = new List<Solid>();
+        
         public bool is_swiming = false;
         public int hotbar;
         //public Block_ids Selected_block = null;
@@ -49,7 +50,11 @@ namespace Minecraft
         public double time = 0;
         public bool curent_tick = false;
         public List<Entity> Entity_list = new List<Entity>();
-
+        public List<Entity> Existing_Entities = new list<Entity>();
+        public void Kill(cordinates Pos, List<Entity> List)
+        {
+            List.Remove(cordinates);
+        }
     }
 
     class Block_ids(int Id, string texture, ConsoleColor fG, ConsoleColor bG)
