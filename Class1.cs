@@ -3,12 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Minecraft
 {
-    class Player : cordinates
+
+    class Player : Cordinates
 
     {
 
@@ -32,9 +34,9 @@ namespace Minecraft
     {
         //public List<Solid> Block_list = new List<Solid>();
     }
-    class cordinates
+    class Cordinates
     {
-        public int x = 4;
+        public int x = 11;
         public int y = 11;
 
 
@@ -46,7 +48,7 @@ namespace Minecraft
         public int y_size = 13;
         public double time = 0;
         public bool curent_tick = false;
-
+        public List<Entity> Entity_list = new List<Entity>();
 
     }
 
@@ -105,6 +107,42 @@ namespace Minecraft
     }
     class Entity(string name, int Health, Behaviour type)
     {
+        protected static int origRow;
+        protected static int origCol;
 
+        protected static void WriteAt(string s, int x, int y)
+        {
+            try
+            {
+                Console.SetCursorPosition(origCol + x, origRow + y);
+
+                Console.Write(s);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+
+            }
+        }
+        public bool grounded = true;
+
+        public Cordinates cordinates = new Cordinates();
+        
+        public void gravity(int[,] grid)
+        {
+            //WriteAt("  ", cordinates.x, cordinates.y);
+            if (grid[cordinates.y + 1, cordinates.x] == 0)
+            {
+                Thread.Sleep(100);
+                if (grid[cordinates.y - 2, cordinates.x] == 0)
+                {
+                    WriteAt("  ", cordinates.x * 2, cordinates.y);
+                    cordinates.y++;
+                }
+            }
+            WriteAt("██", cordinates.x * 2, cordinates.y);
+
+        }
+
+        
     }
 }
