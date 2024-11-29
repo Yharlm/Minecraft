@@ -1,4 +1,5 @@
 
+
 //using ConsoleNewMinigame;
 using Minecraft;
 using System;
@@ -42,15 +43,6 @@ namespace Minecraft
             Game overworld = new Game();
             Player player = new Player();
 
-
-            //Block_ids air = new Block_ids(0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
-            //Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
-            //Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
-            //Block_ids stone = new Block_ids(3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
-            //Block_ids wood = new Block_ids(4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow);
-            //Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
-            //Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
-            //Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
             Solid Default = new Solid("null", 0, null, default, default);
             Non_solid Background = new Non_solid("", 0, null, default, default);
 
@@ -64,6 +56,17 @@ namespace Minecraft
 
             Default = new Solid("waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
             Default = new Solid("Leaves", 7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green); player.Block_list.Add(Default);
+
+            Entity Mob = new Entity(null,0,null); overworld.Entity_list.Add(Mob);
+            Mob = new Entity("pig", 0, null); overworld.Entity_list.Add(Mob);
+            //Entity pig = new Entity("pig", 10, null); Mob pig.gravity(grid);
+
+
+
+
+
+
+
             //Move this to the block method using switch case or make a new class block
 
 
@@ -77,24 +80,24 @@ namespace Minecraft
                 double timer = overworld.time += 0.0002;
                 if (overworld.time >= tick)
                 {
-                    
+
                     overworld.curent_tick = true;
                     overworld.time = 0;
 
                 }
                 else
                 {
-                    
+
                     overworld.curent_tick = false;
                 }
                 Console.ForegroundColor = ConsoleColor.White;
                 WriteAt(timer.ToString(), 0, 2);
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 GetInput(grid, player);
-
+                Entity_update(grid,overworld.Entity_list);
                 BlockUpdate(grid, player, overworld);
-
-                cordinates PlayerPos = new cordinates();
+                
+                Cordinates PlayerPos = new Cordinates();
 
                 if (grid[player.y + 1, player.x] == 0)
                 {
@@ -130,19 +133,26 @@ namespace Minecraft
 
         private static void Console_runE()
         {
-            int[] arr = { 1, 2, 3, 3, 3, 4, 5, 4, 3, 3, 4 };
-            int counter = 0;
-
-            for (int i = 1; i < arr.Length; i++)
+            int n = int.Parse(Console.ReadLine());
+            int[] arr = new int[n];
+            for (int i = 0; i < n; i++)
             {
-                if (arr[i] == arr[i - 1]) { counter++; }
-                else
-                {
-
-
-                }
-                Console.WriteLine(counter);
+                arr[i] = int.Parse(Console.ReadLine());
             }
+            int c = 1; int num = 0; int sum = 0;
+            for (int i = 1; i < n; i++) 
+            {
+                if (arr[i] == arr[i-1])
+                {
+                    c++; 
+                }
+                if(c < num) { num  = c; sum = i; }
+
+            }
+            
+           
+            Console.WriteLine(sum);
+
             Console.ReadLine();
 
 
@@ -150,23 +160,28 @@ namespace Minecraft
 
         private static void BlockUpdate(int[,] grid, object plr, object instance)
         {
+            
             //each frame one plock gets updated only, fix this by updating every block at once per frame idk
             Game game = (Game)instance;
             Player player = (Player)plr;
+            bool water_level = true;
             Block_ids water = new Block_ids(6, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
-            for (int i = 0; i < grid.GetLength(0); i++)
-            {
-                int water_level = 0;
-                for (int j = 0; j < grid.GetLength(1); j++)
+            
+            
+                for (int i = 0; i < grid.GetLength(0); i++)
                 {
-                    if (grid[i, j] == 5 || grid[i, j] == 6 && grid[i + 1, j] == 0 && game.curent_tick == true)
-                    {
 
-                        Fill_block(j, i + 1, grid, player.Block_list[5]);
-                        game.curent_tick = false;
+                    for (int j = 0; j < grid.GetLength(1); j++)
+                    {
+                        if (grid[i, j] == 5 || grid[i, j] == 6 && grid[i + 1, j] == 0 )
+                        {
+
+                            Fill_block(j, i + 1, grid, player.Block_list[5]);
+                            game.curent_tick = false;
+                        }
                     }
                 }
-            }
+            
         }
 
         private static void BuildWorld(int[,] grid, object instance)
@@ -564,8 +579,12 @@ namespace Minecraft
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
 
-        static void Entity_update(Entity entity)
+        static void Entity_update(int[,] grid,List<Entity> Entity_list)
         {
+            foreach (Entity entity in Entity_list)
+            {
+                entity.gravity(grid);
+            }
 
         }
 
