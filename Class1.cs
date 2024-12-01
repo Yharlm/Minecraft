@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,9 +15,10 @@ namespace Minecraft
 
     {
 
+        public bool Holding = false;
         public List<Non_solid> Block_Back_list = new List<Non_solid>();
         public List<Solid> Block_list = new List<Solid>();
-        
+
         public bool is_swiming = false;
         public int hotbar;
         //public Block_ids Selected_block = null;
@@ -31,6 +33,7 @@ namespace Minecraft
         public bool grounded = false;
 
     }
+    
     class Inventory : Player
     {
         //public List<Solid> Block_list = new List<Solid>();
@@ -45,15 +48,54 @@ namespace Minecraft
 
     class Game : Player
     {
+        protected static int origRow;
+        protected static int origCol;
+
+        protected static void WriteAt(string s, int x, int y)
+        {
+            try
+            {
+                Console.SetCursorPosition(origCol + x, origRow + y);
+
+                Console.Write(s);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+
+            }
+        }
+        public Cordinates cordinates = new Cordinates();
+        public int number = 0;
         public int x_size = 30;
         public int y_size = 13;
         public double time = 0;
         public bool curent_tick = false;
         public List<Entity> Entity_list = new List<Entity>();
-        public List<Entity> Existing_Entities = new list<Entity>();
-        public void Kill(cordinates Pos, List<Entity> List)
+        public List<Entity> Existing_Entities = new List<Entity>();
+        
+
+        public void Spawn_entity(Entity mob)
         {
-            List.Remove(cordinates);
+            Entity_list.Add(mob);
+            Existing_Entities.Add(mob);
+            //number++;
+        }
+        
+        
+        public void gravity(int[,] grid,Game game)
+        {
+            //WriteAt("  ", cordinates.x, cordinates.y);
+            if (grid[cordinates.y + 1, cordinates.x] == 0)
+            {
+                
+                if (grid[cordinates.y - 2, cordinates.x] == 0 && game.curent_tick)
+                {
+                    WriteAt("  ", cordinates.x * 2, cordinates.y);
+                    cordinates.y++;
+                }
+            }
+            WriteAt("██", cordinates.x * 2, cordinates.y);
+
         }
     }
 
@@ -110,8 +152,12 @@ namespace Minecraft
         }
 
     }
-    class Entity(string name, int Health, Behaviour type)
+    class Entity(string name, int health, Behaviour type)
     {
+        public string Name = name;
+        public int Health = health;
+        public Behaviour Type = type;
+
         protected static int origRow;
         protected static int origCol;
 
@@ -132,22 +178,21 @@ namespace Minecraft
 
         public Cordinates cordinates = new Cordinates();
         
-        public void gravity(int[,] grid)
+        public void gravity(int[,] grid,bool time)
         {
             //WriteAt("  ", cordinates.x, cordinates.y);
-            if (grid[cordinates.y + 1, cordinates.x] == 0)
+            if (grid[cordinates.y + 1, cordinates.x] == 0 && time)
             {
-                Thread.Sleep(100);
-                if (grid[cordinates.y - 2, cordinates.x] == 0)
-                {
+                
+                
                     WriteAt("  ", cordinates.x * 2, cordinates.y);
                     cordinates.y++;
-                }
+                
             }
             WriteAt("██", cordinates.x * 2, cordinates.y);
 
         }
 
-        
+
     }
 }
