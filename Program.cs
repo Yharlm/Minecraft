@@ -10,7 +10,7 @@ namespace Minecraft
     class Program
     {
 
-
+        
 
         protected static int origRow;
         protected static int origCol;
@@ -32,12 +32,13 @@ namespace Minecraft
         {
             //Console_runE();
 
+            
 
             Console.CursorVisible = false;
             Console.BackgroundColor = ConsoleColor.Cyan;
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
-            WriteAt("Minecraft v0.0.2.5, now with Inventory... sort of", 1, 1);
+            WriteAt("Minecraft v0.0.2.7, Added entities, also temporearely ability to inf jump lol", 1, 1);
             Console.ForegroundColor = default;
 
             Game overworld = new Game();
@@ -57,7 +58,7 @@ namespace Minecraft
             Default = new Solid("waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
             Default = new Solid("Leaves", 7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green); player.Block_list.Add(Default);
 
-            Entity Mob = new Entity(null,0,null); overworld.Entity_list.Add(Mob);
+            Entity Mob = new Entity(null, 0, null); overworld.Entity_list.Add(Mob);
             Mob = new Entity("pig", 0, null); overworld.Entity_list.Add(Mob);
             //Entity pig = new Entity("pig", 10, null); Mob pig.gravity(grid);
 
@@ -72,7 +73,7 @@ namespace Minecraft
 
             int[,] grid = new int[player.y_size, player.x_size];
             BuildWorld(grid, player);
-            double tick = 0.5;
+            double tick = 0.1;
 
             while (true)
             {
@@ -93,16 +94,16 @@ namespace Minecraft
                 Console.ForegroundColor = ConsoleColor.White;
                 WriteAt(timer.ToString(), 0, 2);
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                GetInput(grid, player);
-                Entity_update(grid,overworld.Entity_list);
+                GetInput(grid, player,overworld);
+                Entity_update(grid, overworld.Existing_Entities,overworld,player);
                 BlockUpdate(grid, player, overworld);
-                
+
                 Cordinates PlayerPos = new Cordinates();
 
-                if (grid[player.y + 1, player.x] == 0)
+                if (grid[player.y + 1, player.x] == 0 && overworld.curent_tick)
                 {
-                    Thread.Sleep(100);
-                    if (grid[player.y - 2, player.x] == 0)
+                    
+                    if (grid[player.y - 2, player.x] == 0 )
                     {
                         WriteAt("  ", player.x * 2, player.y - 1);
                     }
@@ -140,17 +141,17 @@ namespace Minecraft
                 arr[i] = int.Parse(Console.ReadLine());
             }
             int c = 1; int num = 0; int sum = 0;
-            for (int i = 1; i < n; i++) 
+            for (int i = 1; i < n; i++)
             {
-                if (arr[i] == arr[i-1])
+                if (arr[i] == arr[i - 1])
                 {
-                    c++; 
+                    c++;
                 }
-                if(c < num) { num  = c; sum = i; }
+                if (c < num) { num = c; sum = i; }
 
             }
-            
-           
+
+
             Console.WriteLine(sum);
 
             Console.ReadLine();
@@ -160,28 +161,28 @@ namespace Minecraft
 
         private static void BlockUpdate(int[,] grid, object plr, object instance)
         {
-            
+
             //each frame one plock gets updated only, fix this by updating every block at once per frame idk
             Game game = (Game)instance;
             Player player = (Player)plr;
             bool water_level = true;
             Block_ids water = new Block_ids(6, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
-            
-            
-                for (int i = 0; i < grid.GetLength(0); i++)
+
+
+            for (int i = 0; i < grid.GetLength(0); i++)
+            {
+
+                for (int j = 0; j < grid.GetLength(1); j++)
                 {
-
-                    for (int j = 0; j < grid.GetLength(1); j++)
+                    if (grid[i, j] == 5 || grid[i, j] == 6 && grid[i + 1, j] == 0)
                     {
-                        if (grid[i, j] == 5 || grid[i, j] == 6 && grid[i + 1, j] == 0 )
-                        {
 
-                            Fill_block(j, i + 1, grid, player.Block_list[5]);
-                            game.curent_tick = false;
-                        }
+                        Fill_block(j, i + 1, grid, player.Block_list[5]);
+                        game.curent_tick = false;
                     }
                 }
-            
+            }
+
         }
 
         private static void BuildWorld(int[,] grid, object instance)
@@ -227,10 +228,10 @@ namespace Minecraft
 
             Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
             Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
-            Fill_block(54, 6, grid, player.Block_list[5]);
-            structure(tree, 11, grid, wood);
-            structure(Leaves, 11, grid, leaves);
-            structure(House, 31, grid, stone);
+            //Fill_block(54, 6, grid, player.Block_list[5]);
+            //structure(tree, 11, grid, wood);
+            //structure(Leaves, 11, grid, leaves);
+            //structure(House, 31, grid, stone);
         }
 
         static void structure(object struc, int Local_x, int[,] grid, object Block)
@@ -281,8 +282,28 @@ namespace Minecraft
 
         }
 
-        //static double velocity() 
-        private static void GetInput(int[,] grid, object instance)
+        static bool GetRadius(Entity mob1, Player plr, int distance)
+        {
+            bool res = false;
+            if(mob1.cordinates.x > plr.x - distance && mob1.cordinates.x < plr.x + distance)
+            {
+                res = true;
+            }
+            //if (mob1.cordinates.x >= plr.x && mob1.cordinates.x <= distance)
+            //{
+            //    res = true;
+            //}
+            //if (mob1.cordinates.y <= plr.y && mob1.cordinates.y >= distance)
+            //{
+            //    res = true;
+            //}
+            //if (mob1.cordinates.y >= plr.y && mob1.cordinates.y <= distance)
+            //{
+            //    res = true;
+            //}
+            return res;
+        }
+        private static void GetInput(int[,] grid, object instance,Game game)
         {
 
             //Block_ids air = new Block_ids(0, "  ", default, ConsoleColor.Cyan);
@@ -293,23 +314,18 @@ namespace Minecraft
             //Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             //Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             //Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
-
-
+            Random random = new Random();
+            
             Player player = (Player)instance;
 
             Solid air = player.Block_list[0];
 
 
 
-
-
-
-
-
-
             grid[player.y, player.x] = 0;
             int x = player.x;
             int y = player.y;
+            
             if (Console.KeyAvailable == true)
             {
 
@@ -339,10 +355,48 @@ namespace Minecraft
                 WriteAt("  ", 110, 0);
             }
             else { player.Input = null; }
-
+            
             //player.Selected_block = dirt;
             switch (player.Input)
             {
+                case "Q":
+                    if (player.Holding == true)
+                    {
+                        player.Holding = false;
+                    }
+                    else
+                    {
+                        player.Holding = true;
+                    }
+                    
+                    break;
+                case "Y":
+                    foreach (Entity ent in game.Existing_Entities)
+                    {
+                        WriteAt("  ", ent.cordinates.x * 2, ent.cordinates.y);
+                    }
+                    game.Existing_Entities.Clear();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    WriteAt(game.Existing_Entities.Count().ToString() + "  ", 24, 3);
+                    Console.ForegroundColor = default;
+                    break;
+                case "T":
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        WriteAt(game.Existing_Entities.Count().ToString(), 24, 3);
+                        Console.ForegroundColor = default;
+
+                        Entity mob = game.Entity_list[0];
+                        Entity Default = new Entity(mob.Name, mob.Health, mob.Type);
+                        Default.cordinates.x = random.Next(4, 55);
+                        
+                        
+
+                        game.Existing_Entities.Add(Default);
+                        //game.Spawn_entity(entity);
+
+                        break;
+                    }
                 case "E":
                     player.hotbar++;
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -427,24 +481,14 @@ namespace Minecraft
 
                     break;
                 case "W":
-                    if (player.grounded == false)
-                    {
-                        //if (player.last_key == "D")
-                        //{
-                        //    x += 2;
-                        //}
-                        //if (player.last_key == "A")
-                        //{
-                        //    x -= 2;
-                        //}
-                    }
+                    
                     if (player.grounded == true && grid[player.y - 3, player.x] == 0)
                     {
                         y -= 2;
                         //WriteAt("██", x * 2, y - 1);
                         //WriteAt("██", x * 2, y);
                         //grid[player.y - 1, player.x] = 0;
-                        player.grounded = false;
+                        
                     }
                     else if (player.grounded == true && grid[player.y - 2, player.x] == 0)
                     {
@@ -452,13 +496,13 @@ namespace Minecraft
                         //WriteAt("██", x * 2, y - 1);
                         //WriteAt("██", x * 2, y);
                         //grid[player.y - 1, player.x] = 0;
-                        player.grounded = false;
+                        
                     }
                     else if (player.grounded == true && grid[player.y - 1, player.x] == 0)
                     {
-
+                        
                     }
-
+                    player.grounded = false;
 
 
                     break;
@@ -579,16 +623,38 @@ namespace Minecraft
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
 
-        static void Entity_update(int[,] grid,List<Entity> Entity_list)
+        static void Entity_update(int[,] grid, List<Entity> Entity_list,Game game,Player player)
         {
-            foreach (Entity entity in Entity_list)
+            PlayerAbilities(grid,player,game);
+            foreach (Entity entity in game.Existing_Entities)
             {
-                entity.gravity(grid);
+                entity.gravity(grid,game.curent_tick);
             }
+            
+            
 
         }
 
-
-
+        private static void PlayerAbilities(int[,] grid, Player player, Game game)
+        {
+            
+            if (player.Holding == true)
+            {
+                
+                try
+                {
+                    foreach (Entity ent in game.Existing_Entities)
+                    {
+                        if (GetRadius(ent, player, 4))
+                        {
+                            WriteAt("  ", ent.cordinates.x * 2, ent.cordinates.y);
+                            ent.cordinates.y = player.y - 2;
+                            ent.cordinates.x = player.x +0;
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
     }
 }
