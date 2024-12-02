@@ -1,16 +1,10 @@
-
-
 //using ConsoleNewMinigame;
-using Minecraft;
-using System;
-using System.Numerics;
-
 namespace Minecraft
 {
     class Program
     {
 
-        
+
 
         protected static int origRow;
         protected static int origCol;
@@ -32,7 +26,7 @@ namespace Minecraft
         {
             //Console_runE();
 
-            
+
 
             Console.CursorVisible = false;
             Console.BackgroundColor = ConsoleColor.Cyan;
@@ -94,16 +88,16 @@ namespace Minecraft
                 Console.ForegroundColor = ConsoleColor.White;
                 WriteAt(timer.ToString(), 0, 2);
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                GetInput(grid, player,overworld);
-                Entity_update(grid, overworld.Existing_Entities,overworld,player);
+                GetInput(grid, player, overworld);
+                Entity_update(grid, overworld.Existing_Entities, overworld, player);
                 BlockUpdate(grid, player, overworld);
 
                 Cordinates PlayerPos = new Cordinates();
 
                 if (grid[player.y + 1, player.x] == 0 && overworld.curent_tick)
                 {
-                    
-                    if (grid[player.y - 2, player.x] == 0 )
+
+                    if (grid[player.y - 2, player.x] == 0)
                     {
                         WriteAt("  ", player.x * 2, player.y - 1);
                     }
@@ -134,25 +128,42 @@ namespace Minecraft
 
         private static void Console_runE()
         {
-            int n = int.Parse(Console.ReadLine());
-            int[] arr = new int[n];
-            for (int i = 0; i < n; i++)
+            //insialise the random class and tell the player what to do
+            Console.WriteLine("random Number Between 1 and 100 has been generated: try to guess it in 7 attempts");
+            Random random = new Random();
+            //generate number and initalise attempts
+            int num = random.Next(1, 100);
+            int attempts = 7;
+            int input = 0;
+            //a loop that ends once the player has 0 lives
+            while (attempts != 0)
             {
-                arr[i] = int.Parse(Console.ReadLine());
-            }
-            int c = 1; int num = 0; int sum = 0;
-            for (int i = 1; i < n; i++)
-            {
-                if (arr[i] == arr[i - 1])
+                //gets player input
+                try { input = int.Parse(Console.ReadLine()); }
+                catch
                 {
-                    c++;
+                    Console.WriteLine("do i have to mention its also NOT a letter?");
+                    Console.Beep();
                 }
-                if (c < num) { num = c; sum = i; }
-
+                //a few "if" statemtents for the posibilities
+                //wrong answers give a hint and print out how many lives you have left
+                if (input > num) { Console.WriteLine("lower (: lives left:" + attempts); attempts--; }
+                if (input < num) { Console.WriteLine("higher lives left:" + attempts); attempts--; }
+                if (input == num)
+                {
+                    Console.Clear();
+                    //the very enthusiastic Win screen
+                    Console.Beep(); Console.WriteLine("fine you win..");
+                    Thread.Sleep(4000);
+                    Environment.Exit(0);
+                }
             }
-
-
-            Console.WriteLine(sum);
+            Console.Clear();
+            Console.WriteLine("you lost");
+            Console.Beep(); Thread.Sleep(2000); Console.Clear();
+            Console.WriteLine("im not surprised");
+            Console.Beep(); Thread.Sleep(2000); Console.Clear();
+            Environment.Exit(0);
 
             Console.ReadLine();
 
@@ -285,7 +296,7 @@ namespace Minecraft
         static bool GetRadius(Entity mob1, Player plr, int distance)
         {
             bool res = false;
-            if(mob1.cordinates.x > plr.x - distance && mob1.cordinates.x < plr.x + distance)
+            if (mob1.cordinates.x > plr.x - distance && mob1.cordinates.x < plr.x + distance)
             {
                 res = true;
             }
@@ -303,7 +314,7 @@ namespace Minecraft
             //}
             return res;
         }
-        private static void GetInput(int[,] grid, object instance,Game game)
+        private static void GetInput(int[,] grid, object instance, Game game)
         {
 
             //Block_ids air = new Block_ids(0, "  ", default, ConsoleColor.Cyan);
@@ -315,7 +326,7 @@ namespace Minecraft
             //Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             //Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
             Random random = new Random();
-            
+
             Player player = (Player)instance;
 
             Solid air = player.Block_list[0];
@@ -325,7 +336,7 @@ namespace Minecraft
             grid[player.y, player.x] = 0;
             int x = player.x;
             int y = player.y;
-            
+
             if (Console.KeyAvailable == true)
             {
 
@@ -355,20 +366,23 @@ namespace Minecraft
                 WriteAt("  ", 110, 0);
             }
             else { player.Input = null; }
-            
+
             //player.Selected_block = dirt;
             switch (player.Input)
             {
+                case "N":
+
                 case "Q":
                     if (player.Holding == true)
                     {
+                        player.held = null;
                         player.Holding = false;
                     }
                     else
                     {
                         player.Holding = true;
                     }
-                    
+
                     break;
                 case "Y":
                     foreach (Entity ent in game.Existing_Entities)
@@ -389,8 +403,8 @@ namespace Minecraft
                         Entity mob = game.Entity_list[0];
                         Entity Default = new Entity(mob.Name, mob.Health, mob.Type);
                         Default.cordinates.x = random.Next(4, 55);
-                        
-                        
+
+
 
                         game.Existing_Entities.Add(Default);
                         //game.Spawn_entity(entity);
@@ -481,28 +495,25 @@ namespace Minecraft
 
                     break;
                 case "W":
-                    
-                    if (player.grounded == true && grid[player.y - 3, player.x] == 0)
+                    if (grid[player.y + 1, player.x] != 0)
                     {
-                        y -= 2;
-                        //WriteAt("██", x * 2, y - 1);
-                        //WriteAt("██", x * 2, y);
-                        //grid[player.y - 1, player.x] = 0;
-                        
+
+                        if (grid[player.y - 2, player.x] == 0)
+                        {
+                            y -= 1;
+                        }
+                        if (grid[player.y - 3, player.x] == 0 && grid[player.y - 2, player.x] == 0)
+                        {
+                            y -= 1;
+                        }
+                        if (grid[player.y - 3, player.x] == 0 && grid[player.y - 2, player.x] == 0 && grid[player.y - 4, player.x] == 0)
+                        {
+                            y -= 1;
+                        }
+
+
                     }
-                    else if (player.grounded == true && grid[player.y - 2, player.x] == 0)
-                    {
-                        y -= 1;
-                        //WriteAt("██", x * 2, y - 1);
-                        //WriteAt("██", x * 2, y);
-                        //grid[player.y - 1, player.x] = 0;
-                        
-                    }
-                    else if (player.grounded == true && grid[player.y - 1, player.x] == 0)
-                    {
-                        
-                    }
-                    player.grounded = false;
+
 
 
                     break;
@@ -623,37 +634,45 @@ namespace Minecraft
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
 
-        static void Entity_update(int[,] grid, List<Entity> Entity_list,Game game,Player player)
+        static void Entity_update(int[,] grid, List<Entity> Entity_list, Game game, Player player)
         {
-            PlayerAbilities(grid,player,game);
+            PlayerAbilities(grid, player, game);
+            
             foreach (Entity entity in game.Existing_Entities)
             {
-                entity.gravity(grid,game.curent_tick);
+                
+                entity.gravity(grid, game.curent_tick);
             }
-            
-            
+
+
 
         }
 
         private static void PlayerAbilities(int[,] grid, Player player, Game game)
         {
-            
-            if (player.Holding == true)
+            Entity entity = player.held;
+            if (player.Holding == true && player.held == null)
             {
                 
                 try
                 {
                     foreach (Entity ent in game.Existing_Entities)
                     {
-                        if (GetRadius(ent, player, 4))
+                        if (GetRadius(ent, player, 1))
                         {
-                            WriteAt("  ", ent.cordinates.x * 2, ent.cordinates.y);
-                            ent.cordinates.y = player.y - 2;
-                            ent.cordinates.x = player.x +0;
+                            player.held = ent;
+                            
                         }
                     }
                 }
                 catch { }
+            }
+            else if (player.held != null)
+            {
+                WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y-1);
+                WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
+                entity.cordinates.y = player.y - 2;
+                entity.cordinates.x = player.x + 0;
             }
         }
     }
