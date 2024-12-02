@@ -14,7 +14,7 @@ namespace Minecraft
     class Player : Cordinates
 
     {
-
+        public Entity held = null;
         public bool Holding = false;
         public List<Non_solid> Block_Back_list = new List<Non_solid>();
         public List<Solid> Block_list = new List<Solid>();
@@ -82,8 +82,12 @@ namespace Minecraft
         }
         
         
-        public void gravity(int[,] grid,Game game)
+        public void gravity(int[,] grid,Game game, List<Entity> Exists)
         {
+            foreach(Entity ent in Exists)
+            {
+
+            }
             //WriteAt("  ", cordinates.x, cordinates.y);
             if (grid[cordinates.y + 1, cordinates.x] == 0)
             {
@@ -94,6 +98,7 @@ namespace Minecraft
                     cordinates.y++;
                 }
             }
+            
             WriteAt("██", cordinates.x * 2, cordinates.y);
 
         }
@@ -154,6 +159,7 @@ namespace Minecraft
     }
     class Entity(string name, int health, Behaviour type)
     {
+        
         public string Name = name;
         public int Health = health;
         public Behaviour Type = type;
@@ -183,14 +189,19 @@ namespace Minecraft
             //WriteAt("  ", cordinates.x, cordinates.y);
             if (grid[cordinates.y + 1, cordinates.x] == 0 && time)
             {
-                
-                
-                    WriteAt("  ", cordinates.x * 2, cordinates.y);
-                    cordinates.y++;
-                
-            }
-            WriteAt("██", cordinates.x * 2, cordinates.y);
 
+
+                WriteAt("  ", cordinates.x * 2, cordinates.y);
+                
+                WriteAt("  ", cordinates.x * 2, cordinates.y-1);
+                cordinates.y++;
+
+
+            }
+            Console.ForegroundColor = ConsoleColor.Red;
+            WriteAt("██", cordinates.x * 2, cordinates.y-1);
+            WriteAt("██", cordinates.x * 2, cordinates.y);
+            Console.ForegroundColor = default;
         }
 
 
