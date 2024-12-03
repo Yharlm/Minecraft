@@ -14,6 +14,8 @@ namespace Minecraft
     class Player : Cordinates
 
     {
+
+        public int health = 5;
         public Entity held = null;
         public bool Holding = false;
         public List<Non_solid> Block_Back_list = new List<Non_solid>();
@@ -33,7 +35,7 @@ namespace Minecraft
         public bool grounded = false;
 
     }
-    
+
     class Inventory : Player
     {
         //public List<Solid> Block_list = new List<Solid>();
@@ -72,7 +74,7 @@ namespace Minecraft
         public bool curent_tick = false;
         public List<Entity> Entity_list = new List<Entity>();
         public List<Entity> Existing_Entities = new List<Entity>();
-        
+
 
         public void Spawn_entity(Entity mob)
         {
@@ -80,25 +82,25 @@ namespace Minecraft
             Existing_Entities.Add(mob);
             //number++;
         }
-        
-        
-        public void gravity(int[,] grid,Game game, List<Entity> Exists)
+
+
+        public void gravity(int[,] grid, Game game, List<Entity> Exists)
         {
-            foreach(Entity ent in Exists)
+            foreach (Entity ent in Exists)
             {
 
             }
             //WriteAt("  ", cordinates.x, cordinates.y);
             if (grid[cordinates.y + 1, cordinates.x] == 0)
             {
-                
+
                 if (grid[cordinates.y - 2, cordinates.x] == 0 && game.curent_tick)
                 {
                     WriteAt("  ", cordinates.x * 2, cordinates.y);
                     cordinates.y++;
                 }
             }
-            
+
             WriteAt("██", cordinates.x * 2, cordinates.y);
 
         }
@@ -159,7 +161,7 @@ namespace Minecraft
     }
     class Entity(string name, int health, Behaviour type)
     {
-        
+
         public string Name = name;
         public int Health = health;
         public Behaviour Type = type;
@@ -183,8 +185,8 @@ namespace Minecraft
         public bool grounded = true;
 
         public Cordinates cordinates = new Cordinates();
-        
-        public void gravity(int[,] grid,bool time)
+
+        public void gravity(int[,] grid, bool time)
         {
             //WriteAt("  ", cordinates.x, cordinates.y);
             if (grid[cordinates.y + 1, cordinates.x] == 0 && time)
@@ -192,14 +194,14 @@ namespace Minecraft
 
 
                 WriteAt("  ", cordinates.x * 2, cordinates.y);
-                
-                WriteAt("  ", cordinates.x * 2, cordinates.y-1);
+
+                WriteAt("  ", cordinates.x * 2, cordinates.y - 1);
                 cordinates.y++;
 
 
             }
             Console.ForegroundColor = ConsoleColor.Red;
-            WriteAt("██", cordinates.x * 2, cordinates.y-1);
+            WriteAt("██", cordinates.x * 2, cordinates.y - 1);
             WriteAt("██", cordinates.x * 2, cordinates.y);
             Console.ForegroundColor = default;
         }
