@@ -54,6 +54,7 @@ namespace Minecraft
 
             Entity Mob = new Entity(null, 0, null); overworld.Entity_list.Add(Mob);
             Mob = new Entity("pig", 0, null); overworld.Entity_list.Add(Mob);
+            Mob = new Entity("TNT", 0, null); overworld.Entity_list.Add(Mob);
             //Entity pig = new Entity("pig", 10, null); Mob pig.gravity(grid);
 
 
@@ -65,8 +66,8 @@ namespace Minecraft
             //Move this to the block method using switch case or make a new class block
 
 
-            int[,] grid = new int[player.y_size, player.x_size];
-            BuildWorld(grid, player);
+            int[,] grid = new int[100,100];
+            BuildWorld(grid, player, overworld);
             double tick = 0.1;
 
             while (true)
@@ -196,8 +197,9 @@ namespace Minecraft
 
         }
 
-        private static void BuildWorld(int[,] grid, object instance)
+        private static void BuildWorld(int[,] grid, object instance,Game game)
         {
+            
             Player player = (Player)instance;
             ConsoleColor Default = ConsoleColor.Cyan;
             Block_ids air = new Block_ids(0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
@@ -209,7 +211,7 @@ namespace Minecraft
             Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
 
-
+            
 
             Structure tree = new Structure();
             tree.Struct = new int[,]{
@@ -237,12 +239,12 @@ namespace Minecraft
             };
 
 
-            Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
-            Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
-            //Fill_block(54, 6, grid, player.Block_list[5]);
-            //structure(tree, 11, grid, wood);
-            //structure(Leaves, 11, grid, leaves);
-            //structure(House, 31, grid, stone);
+            Fill_Index_Cord(0, 20, grid.GetLength(1), 30, grid, dirt);
+            Fill_Index_Cord(0, 19, grid.GetLength(1), 20, grid, Grass);
+            Fill_block(54, 6, grid, player.Block_list[5]);
+            structure(tree, 11, grid, wood);
+            structure(Leaves, 11, grid, leaves);
+            structure(House, 31, grid, stone);
         }
 
         static void structure(object struc, int Local_x, int[,] grid, object Block)
@@ -314,6 +316,13 @@ namespace Minecraft
             //}
             return res;
         }
+        private Cordinates Convert_cor(int x, int y)
+        {
+            Cordinates cords = new Cordinates();
+            cords.y = y;
+            cords.x = x;
+            return cords;
+        }
         private static void GetInput(int[,] grid, object instance, Game game)
         {
 
@@ -366,12 +375,15 @@ namespace Minecraft
                 WriteAt("  ", 110, 0);
             }
             else { player.Input = null; }
-
+            Cordinates player_cords = new Cordinates();
+            player_cords.x = x;
+            player_cords.y = y;
             //player.Selected_block = dirt;
             switch (player.Input)
             {
                 case "N":
-
+                    Explosion(game, grid, player_cords);
+                    break;
                 case "Q":
                     if (player.Holding == true)
                     {
@@ -465,7 +477,7 @@ namespace Minecraft
                     break;
                 case "L":
                     if (player.special_key == "W")
-                        if (grid[player.y + 1, player.x] == 0)
+                        if (grid[player.y + 1, player.x] == 0 && grid[player.y + 2, player.x] != 0)
                         {
                             Fill_block(player.x, player.y + 1, grid, player.Selected_block);
                             player.last_key = null;
@@ -624,6 +636,48 @@ namespace Minecraft
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
 
+        static void Print_Index_Cord(int x1, int y1, int x2, int y2, string text,ConsoleColor FG,ConsoleColor BG)
+        {
+
+            for (int j = y1; j < y2; j++)
+            {
+                for (int i = x1; i < x2; i++)
+                {
+                    Console.ForegroundColor = FG;
+                    Console.BackgroundColor = BG;
+                    
+                    WriteAt(text, i * 2, j);
+
+
+                }
+            }
+            Console.ForegroundColor = default;
+            Console.BackgroundColor = ConsoleColor.Cyan;
+        }
+        static void Fill_Index_Cord2(int x1, int y1, int x2, int y2, int[,] grid, Solid Block,int randomiser)
+        {
+            Random random = new Random();
+            for (int j = y1; j < y2; j++)
+            {
+                for (int i = x1; i < x2; i++)
+                {
+                    int e = random.Next(0, randomiser);
+                    if(e == 0)
+                    {
+                        continue;
+                    }
+                    Console.ForegroundColor = Block.FG;
+                    Console.BackgroundColor = Block.BG;
+                    grid[j, i] = Block.id;
+                    WriteAt(Block.Texture, i * 2, j);
+
+
+                }
+            }
+            Console.ForegroundColor = default;
+            Console.BackgroundColor = ConsoleColor.Cyan;
+        }
+
         static void Fill_block(int x, int y, int[,] grid, Solid Block)
         {
             Console.ForegroundColor = Block.FG;
@@ -637,10 +691,10 @@ namespace Minecraft
         static void Entity_update(int[,] grid, List<Entity> Entity_list, Game game, Player player)
         {
             PlayerAbilities(grid, player, game);
-            
+
             foreach (Entity entity in game.Existing_Entities)
             {
-                
+
                 entity.gravity(grid, game.curent_tick);
             }
 
@@ -653,7 +707,7 @@ namespace Minecraft
             Entity entity = player.held;
             if (player.Holding == true && player.held == null)
             {
-                
+
                 try
                 {
                     foreach (Entity ent in game.Existing_Entities)
@@ -661,7 +715,7 @@ namespace Minecraft
                         if (GetRadius(ent, player, 1))
                         {
                             player.held = ent;
-                            
+
                         }
                     }
                 }
@@ -669,11 +723,40 @@ namespace Minecraft
             }
             else if (player.held != null)
             {
-                WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y-1);
+                //WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y - 1);
                 WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
                 entity.cordinates.y = player.y - 2;
                 entity.cordinates.x = player.x + 0;
             }
+
+
         }
+        private static Block_ids ConvertToVar(Solid s)
+        {
+            Block_ids item = new Block_ids(s.id, s.Texture, s.FG, s.BG);
+            return item;
+        }
+        
+        private static Solid block(string name,Player player)
+        {
+            Solid item = player.Block_list.Find(x => x.Name == name);
+            return item;
+        }
+        static void Explosion(Game player, int[,] grid,Cordinates pos) 
+        {
+            Solid air = new Solid("air", 0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
+            
+            int range = 2;
+            int x = pos.x;
+            int y = pos.y;
+
+            
+            
+            Fill_Index_Cord2(x - range, y - range, x + range + 1, y + range + 1, grid, air, 1);
+            Print_Index_Cord(x - range, y - range, x + range + 1, y + range + 1, "  ", ConsoleColor.Magenta, ConsoleColor.White);
+
+        }
+
+        
     }
 }
