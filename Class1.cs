@@ -44,7 +44,13 @@ namespace Minecraft
     {
         public int x = 11;
         public int y = 11;
-
+        public Cordinates Convert_cor(int x,int y)
+        {
+            Cordinates cords = new Cordinates();
+            cords.y = y;
+            cords.x = x;
+            return cords;
+        }
 
     }
 
@@ -68,8 +74,7 @@ namespace Minecraft
         }
         public Cordinates cordinates = new Cordinates();
         public int number = 0;
-        public int x_size = 30;
-        public int y_size = 13;
+       
         public double time = 0;
         public bool curent_tick = false;
         public List<Entity> Entity_list = new List<Entity>();
@@ -112,6 +117,8 @@ namespace Minecraft
         public string Texture = texture;
         public ConsoleColor FG = fG;
         public ConsoleColor BG = bG;
+
+        
     }
     class Solid(string name, int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
@@ -120,6 +127,7 @@ namespace Minecraft
         public string Texture = texture;
         public ConsoleColor FG = fG;
         public ConsoleColor BG = bG;
+        
     }
     class Non_solid(string name, int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
@@ -201,7 +209,7 @@ namespace Minecraft
 
             }
             Console.ForegroundColor = ConsoleColor.Red;
-            WriteAt("██", cordinates.x * 2, cordinates.y - 1);
+            //WriteAt("██", cordinates.x * 2, cordinates.y - 1);
             WriteAt("██", cordinates.x * 2, cordinates.y);
             Console.ForegroundColor = default;
         }
