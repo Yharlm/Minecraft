@@ -66,9 +66,9 @@ namespace Minecraft
             //Move this to the block method using switch case or make a new class block
 
 
-            int[,] grid = new int[100,100];
+            int[,] grid = new int[100, 100];
             BuildWorld(grid, player, overworld);
-            double tick = 0.1;
+            double tick = 0.05;
 
             while (true)
             {
@@ -92,6 +92,7 @@ namespace Minecraft
                 GetInput(grid, player, overworld);
                 Entity_update(grid, overworld.Existing_Entities, overworld, player);
                 BlockUpdate(grid, player, overworld);
+                PrintUI(player);
 
                 Cordinates PlayerPos = new Cordinates();
 
@@ -125,7 +126,10 @@ namespace Minecraft
 
         }
 
-
+        private static void PrintUI(Player player)
+        {
+            WriteAt(player.health.ToString() + " Health", 3, 4);
+        }
 
         private static void Console_runE()
         {
@@ -197,9 +201,9 @@ namespace Minecraft
 
         }
 
-        private static void BuildWorld(int[,] grid, object instance,Game game)
+        private static void BuildWorld(int[,] grid, object instance, Game game)
         {
-            
+
             Player player = (Player)instance;
             ConsoleColor Default = ConsoleColor.Cyan;
             Block_ids air = new Block_ids(0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
@@ -211,7 +215,7 @@ namespace Minecraft
             Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
             Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
 
-            
+
 
             Structure tree = new Structure();
             tree.Struct = new int[,]{
@@ -239,8 +243,8 @@ namespace Minecraft
             };
 
 
-            Fill_Index_Cord(0, 20, grid.GetLength(1), 30, grid, dirt);
-            Fill_Index_Cord(0, 19, grid.GetLength(1), 20, grid, Grass);
+            Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
+            Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
             Fill_block(54, 6, grid, player.Block_list[5]);
             structure(tree, 11, grid, wood);
             structure(Leaves, 11, grid, leaves);
@@ -302,20 +306,20 @@ namespace Minecraft
             {
                 res = true;
             }
-            //if (mob1.cordinates.x >= plr.x && mob1.cordinates.x <= distance)
-            //{
-            //    res = true;
-            //}
-            //if (mob1.cordinates.y <= plr.y && mob1.cordinates.y >= distance)
-            //{
-            //    res = true;
-            //}
-            //if (mob1.cordinates.y >= plr.y && mob1.cordinates.y <= distance)
-            //{
-            //    res = true;
-            //}
+            
             return res;
         }
+        static bool GetRadius_forplayer(Entity mob1, Player plr, int distance)
+        {
+            bool res = false;
+            if (mob1.cordinates.x > plr.x - distance && mob1.cordinates.x < plr.x + distance)
+            {
+                res = true;
+            }
+
+            return res;
+        }
+
         private Cordinates Convert_cor(int x, int y)
         {
             Cordinates cords = new Cordinates();
@@ -382,7 +386,16 @@ namespace Minecraft
             switch (player.Input)
             {
                 case "N":
-                    Explosion(game, grid, player_cords);
+                    try
+                    {
+                        foreach (Entity entity in game.Existing_Entities)
+                        {
+                            Explosion(game, grid, entity.cordinates);
+                            WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
+                            game.Existing_Entities.Remove(entity);
+                        }
+                    }
+                    catch { }
                     break;
                 case "Q":
                     if (player.Holding == true)
@@ -636,7 +649,7 @@ namespace Minecraft
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
 
-        static void Print_Index_Cord(int x1, int y1, int x2, int y2, string text,ConsoleColor FG,ConsoleColor BG)
+        static void Print_Index_Cord(int x1, int y1, int x2, int y2, string text, ConsoleColor FG, ConsoleColor BG)
         {
 
             for (int j = y1; j < y2; j++)
@@ -645,7 +658,7 @@ namespace Minecraft
                 {
                     Console.ForegroundColor = FG;
                     Console.BackgroundColor = BG;
-                    
+
                     WriteAt(text, i * 2, j);
 
 
@@ -654,7 +667,7 @@ namespace Minecraft
             Console.ForegroundColor = default;
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
-        static void Fill_Index_Cord2(int x1, int y1, int x2, int y2, int[,] grid, Solid Block,int randomiser)
+        static void Fill_Index_Cord2(int x1, int y1, int x2, int y2, int[,] grid, Solid Block, int randomiser)
         {
             Random random = new Random();
             for (int j = y1; j < y2; j++)
@@ -662,7 +675,7 @@ namespace Minecraft
                 for (int i = x1; i < x2; i++)
                 {
                     int e = random.Next(0, randomiser);
-                    if(e == 0)
+                    if (e == 0)
                     {
                         continue;
                     }
@@ -736,27 +749,32 @@ namespace Minecraft
             Block_ids item = new Block_ids(s.id, s.Texture, s.FG, s.BG);
             return item;
         }
-        
-        private static Solid block(string name,Player player)
+
+        private static Solid block(string name, Player player)
         {
             Solid item = player.Block_list.Find(x => x.Name == name);
             return item;
         }
-        static void Explosion(Game player, int[,] grid,Cordinates pos) 
+        static void Explosion(Game game, int[,] grid, Cordinates pos)
         {
+            game.delay(400);
             Solid air = new Solid("air", 0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
-            
-            int range = 2;
+
+            int range = 4;
+            int range_max = 9;
             int x = pos.x;
             int y = pos.y;
 
+
+
+            Fill_Index_Cord2(x - range, y - range, x + range + 1, y + range + 1, grid, air, 30);
+            Fill_Index_Cord2(x - range_max, y - range_max - range, x + range_max + 1, y + range_max + 1 - range, grid, air, 2);
             
-            
-            Fill_Index_Cord2(x - range, y - range, x + range + 1, y + range + 1, grid, air, 1);
-            Print_Index_Cord(x - range, y - range, x + range + 1, y + range + 1, "  ", ConsoleColor.Magenta, ConsoleColor.White);
 
         }
 
         
+
+
     }
 }
