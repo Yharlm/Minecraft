@@ -15,7 +15,7 @@ namespace Minecraft
 
     {
 
-        public int health = 5;
+        public int health = 100;
         public Entity held = null;
         public bool Holding = false;
         public List<Non_solid> Block_Back_list = new List<Non_solid>();
@@ -44,7 +44,7 @@ namespace Minecraft
     {
         public int x = 11;
         public int y = 11;
-        public Cordinates Convert_cor(int x,int y)
+        public Cordinates Convert_cor(int x, int y)
         {
             Cordinates cords = new Cordinates();
             cords.y = y;
@@ -74,7 +74,7 @@ namespace Minecraft
         }
         public Cordinates cordinates = new Cordinates();
         public int number = 0;
-       
+
         public double time = 0;
         public bool curent_tick = false;
         public List<Entity> Entity_list = new List<Entity>();
@@ -86,6 +86,17 @@ namespace Minecraft
             Entity_list.Add(mob);
             Existing_Entities.Add(mob);
             //number++;
+        }
+        public void delay(double delay)
+        {
+            double time = 0;
+            while (delay < time)
+            {
+                if (curent_tick)
+                {
+                    time++;
+                }
+            }
         }
 
 
@@ -118,7 +129,7 @@ namespace Minecraft
         public ConsoleColor FG = fG;
         public ConsoleColor BG = bG;
 
-        
+
     }
     class Solid(string name, int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
@@ -127,7 +138,7 @@ namespace Minecraft
         public string Texture = texture;
         public ConsoleColor FG = fG;
         public ConsoleColor BG = bG;
-        
+
     }
     class Non_solid(string name, int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
@@ -163,7 +174,7 @@ namespace Minecraft
         }
         public void Shoot_WithImaginaryProjectiles()
         {
-
+            
         }
 
     }
