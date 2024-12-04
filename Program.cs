@@ -1,9 +1,4 @@
-
 //using ConsoleNewMinigame;
-using System.ComponentModel.Design;
-using System.Security;
-using System.Timers;
-
 namespace Minecraft
 {
     class Program
@@ -34,7 +29,7 @@ namespace Minecraft
 
             while (true)
             {
-                
+
                 Console.CursorVisible = false;
                 Console.BackgroundColor = ConsoleColor.Cyan;
                 Console.Clear();
@@ -45,7 +40,7 @@ namespace Minecraft
                 Game overworld = new Game();
                 Player player = new Player();
 
-                
+
                 Solid Default = new Solid("null", 0, null, default, default);
                 Non_solid Background = new Non_solid("", 0, null, default, default);
 
@@ -78,8 +73,9 @@ namespace Minecraft
                 BuildWorld(grid, player, overworld);
                 double tick = 0.05;
 
-                while (player.health > 0){
-                    
+                while (player.health > 0)
+                {
+
                     //double timer = Math.Ceiling(overworld.time += 0.0002);
                     double timer = overworld.time += 0.0002;
                     if (overworld.time >= tick)
@@ -131,11 +127,11 @@ namespace Minecraft
                     }
 
                 }
-                
+
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Clear();
-                WriteAt("YOU ARE DEAD..",50,14);
+                WriteAt("YOU ARE DEAD..", 50, 14);
                 Thread.Sleep(1000);
                 Console.WriteLine("  Idiot....");
                 Thread.Sleep(6000);
@@ -190,7 +186,7 @@ namespace Minecraft
             //Console.WriteLine("im not surprised");
             //Console.Beep(); Thread.Sleep(2000); Console.Clear();
             //Environment.Exit(0);
-            
+
 
             Console.ReadLine();
 
@@ -410,9 +406,11 @@ namespace Minecraft
                 case "N":
                     try
                     {
+
                         foreach (Entity entity in game.Existing_Entities)
                         {
-                            Explosion(game, grid, entity.cordinates,player);
+
+                            Explosion(game, grid, entity.cordinates, player);
                             WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
                             game.Existing_Entities.Remove(entity);
                         }
@@ -735,7 +733,8 @@ namespace Minecraft
                 entity.gravity(grid, game.curent_tick);
             }
 
-            Walk_to_player(game.Existing_Entities[0], player, grid);
+            try { Walk_to_player(game.Existing_Entities[0], player, grid, game); }
+            catch { }
 
 
         }
@@ -780,9 +779,10 @@ namespace Minecraft
             Solid item = player.Block_list.Find(x => x.Name == name);
             return item;
         }
-        static void Explosion(Game game, int[,] grid, Cordinates pos,Player player)
+        static void Explosion(Game game, int[,] grid, Cordinates pos, Player player)
         {
-            game.delay(400);
+
+
             Solid air = new Solid("air", 0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
 
             int range = 4;
@@ -795,18 +795,37 @@ namespace Minecraft
             Fill_Index_Cord2(x - range, y - range, x + range + 1, y + range + 1, grid, air, 30);
             Fill_Index_Cord2(x - range_max, y - range_max - range, x + range_max + 1, y + range_max + 1 - range, grid, air, 2);
 
-            if(GetRadius_forplayer(pos, Convert_cor(player.x, player.y),range_max)) { player.health -= 50; }
+            if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range_max)) { player.health -= 50; }
             if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range)) { player.health -= 50; }
+
         }
 
-        static void Walk_to_player(Entity entity, Player player, int[,] grid)
+        static void Walk_to_player(Entity entity, Player player, int[,] grid, Game game)
         {
+
+            int speed = 5;
             if (player.x < entity.cordinates.x)
             {
-                if (grid[player.y, entity.cordinates.x - 1] == 0) {
+
+                if (grid[entity.cordinates.y, entity.cordinates.x - 1] == 0 && game.delay(speed))
+                {
+                    WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
                     entity.cordinates.x--;
-                        }
+                }
+
             }
+            else if (player.x > entity.cordinates.x)
+            {
+
+                if (grid[entity.cordinates.y, entity.cordinates.x + 1] == 0 && game.delay(speed))
+                {
+                    WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
+                    entity.cordinates.x++;
+                }
+
+            }
+
+
         }
 
 
