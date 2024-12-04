@@ -1,4 +1,9 @@
+
 //using ConsoleNewMinigame;
+using System.ComponentModel.Design;
+using System.Security;
+using System.Timers;
+
 namespace Minecraft
 {
     class Program
@@ -27,148 +32,165 @@ namespace Minecraft
             //Console_runE();
 
 
-
-            Console.CursorVisible = false;
-            Console.BackgroundColor = ConsoleColor.Cyan;
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.White;
-            WriteAt("Minecraft v0.0.2.7, Added entities, also temporearely ability to inf jump lol", 1, 1);
-            Console.ForegroundColor = default;
-
-            Game overworld = new Game();
-            Player player = new Player();
-
-            Solid Default = new Solid("null", 0, null, default, default);
-            Non_solid Background = new Non_solid("", 0, null, default, default);
-
-            Default = new Solid("air", 0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan); player.Block_list.Add(Default);
-            Default = new Solid("Grass", 1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
-            Default = new Solid("Dirt", 2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
-            Default = new Solid("Stone", 3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray); player.Block_list.Add(Default);
-            Default = new Solid("Log", 4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
-            Background = new Non_solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_Back_list.Add(Background);
-            //Default = new Solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
-
-            Default = new Solid("waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
-            Default = new Solid("Leaves", 7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green); player.Block_list.Add(Default);
-
-            Entity Mob = new Entity(null, 0, null); overworld.Entity_list.Add(Mob);
-            Mob = new Entity("pig", 0, null); overworld.Entity_list.Add(Mob);
-            Mob = new Entity("TNT", 0, null); overworld.Entity_list.Add(Mob);
-            //Entity pig = new Entity("pig", 10, null); Mob pig.gravity(grid);
-
-
-
-
-
-
-
-            //Move this to the block method using switch case or make a new class block
-
-
-            int[,] grid = new int[100, 100];
-            BuildWorld(grid, player, overworld);
-            double tick = 0.05;
-
             while (true)
             {
-                //double timer = Math.Ceiling(overworld.time += 0.0002);
-                double timer = overworld.time += 0.0002;
-                if (overworld.time >= tick)
-                {
-
-                    overworld.curent_tick = true;
-                    overworld.time = 0;
-
-                }
-                else
-                {
-
-                    overworld.curent_tick = false;
-                }
+                
+                Console.CursorVisible = false;
+                Console.BackgroundColor = ConsoleColor.Cyan;
+                Console.Clear();
                 Console.ForegroundColor = ConsoleColor.White;
-                WriteAt(timer.ToString(), 0, 2);
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                GetInput(grid, player, overworld);
-                Entity_update(grid, overworld.Existing_Entities, overworld, player);
-                BlockUpdate(grid, player, overworld);
-                PrintUI(player);
+                WriteAt("Minecraft v0.0.2.7, Added entities, also temporearely ability to inf jump lol", 1, 1);
+                Console.ForegroundColor = default;
 
-                Cordinates PlayerPos = new Cordinates();
+                Game overworld = new Game();
+                Player player = new Player();
 
-                if (grid[player.y + 1, player.x] == 0 && overworld.curent_tick)
-                {
+                
+                Solid Default = new Solid("null", 0, null, default, default);
+                Non_solid Background = new Non_solid("", 0, null, default, default);
 
-                    if (grid[player.y - 2, player.x] == 0)
+                Default = new Solid("air", 0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan); player.Block_list.Add(Default);
+                Default = new Solid("Grass", 1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
+                Default = new Solid("Dirt", 2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
+                Default = new Solid("Stone", 3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray); player.Block_list.Add(Default);
+                Default = new Solid("Log", 4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
+                Background = new Non_solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_Back_list.Add(Background);
+                //Default = new Solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
+
+                Default = new Solid("waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
+                Default = new Solid("Leaves", 7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green); player.Block_list.Add(Default);
+
+                Entity Mob = new Entity(null, 0, null); overworld.Entity_list.Add(Mob);
+                Mob = new Entity("pig", 0, null); overworld.Entity_list.Add(Mob);
+                Mob = new Entity("TNT", 0, null); overworld.Entity_list.Add(Mob);
+                //Entity pig = new Entity("pig", 10, null); Mob pig.gravity(grid);
+
+
+
+
+
+
+
+                //Move this to the block method using switch case or make a new class block
+
+
+                int[,] grid = new int[100, 100];
+                BuildWorld(grid, player, overworld);
+                double tick = 0.05;
+
+                while (player.health > 0){
+                    
+                    //double timer = Math.Ceiling(overworld.time += 0.0002);
+                    double timer = overworld.time += 0.0002;
+                    if (overworld.time >= tick)
                     {
-                        WriteAt("  ", player.x * 2, player.y - 1);
+
+                        overworld.curent_tick = true;
+                        overworld.time = 0;
+
                     }
-                    WriteAt("  ", player.x * 2, player.y - 1);
+                    else
+                    {
 
-                    player.y++;
-                    player.grounded = false;
+                        overworld.curent_tick = false;
+                    }
                     Console.ForegroundColor = ConsoleColor.White;
-
-                    //WriteAt("  ", player.x * 2, player.y);
-
+                    WriteAt(timer.ToString(), 0, 2);
                     Console.ForegroundColor = ConsoleColor.Cyan;
+                    GetInput(grid, player, overworld);
+                    Entity_update(grid, overworld.Existing_Entities, overworld, player);
+                    BlockUpdate(grid, player, overworld);
+                    PrintUI(player);
 
-                    //Thread.Sleep(100);
+                    Cordinates PlayerPos = new Cordinates();
 
+                    if (grid[player.y + 1, player.x] == 0 && overworld.curent_tick)
+                    {
+
+                        if (grid[player.y - 2, player.x] == 0)
+                        {
+                            WriteAt("  ", player.x * 2, player.y - 1);
+                        }
+                        WriteAt("  ", player.x * 2, player.y - 1);
+
+                        player.y++;
+                        player.grounded = false;
+                        Console.ForegroundColor = ConsoleColor.White;
+
+                        //WriteAt("  ", player.x * 2, player.y);
+
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+
+                        //Thread.Sleep(100);
+
+
+                    }
+                    else
+                    {
+                        player.grounded = true;
+                    }
 
                 }
-                else
-                {
-                    player.grounded = true;
-                }
+                
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Clear();
+                WriteAt("YOU ARE DEAD..",50,14);
+                Thread.Sleep(1000);
+                Console.WriteLine("  Idiot....");
+                Thread.Sleep(6000);
+                Console.BackgroundColor = ConsoleColor.Cyan;
+                Console.ForegroundColor = default;
 
             }
-
         }
 
         private static void PrintUI(Player player)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             WriteAt(player.health.ToString() + " Health", 3, 4);
+            Console.ForegroundColor = default;
         }
 
         private static void Console_runE()
         {
-            //insialise the random class and tell the player what to do
-            Console.WriteLine("random Number Between 1 and 100 has been generated: try to guess it in 7 attempts");
-            Random random = new Random();
-            //generate number and initalise attempts
-            int num = random.Next(1, 100);
-            int attempts = 7;
-            int input = 0;
-            //a loop that ends once the player has 0 lives
-            while (attempts != 0)
-            {
-                //gets player input
-                try { input = int.Parse(Console.ReadLine()); }
-                catch
-                {
-                    Console.WriteLine("do i have to mention its also NOT a letter?");
-                    Console.Beep();
-                }
-                //a few "if" statemtents for the posibilities
-                //wrong answers give a hint and print out how many lives you have left
-                if (input > num) { Console.WriteLine("lower (: lives left:" + attempts); attempts--; }
-                if (input < num) { Console.WriteLine("higher lives left:" + attempts); attempts--; }
-                if (input == num)
-                {
-                    Console.Clear();
-                    //the very enthusiastic Win screen
-                    Console.Beep(); Console.WriteLine("fine you win..");
-                    Thread.Sleep(4000);
-                    Environment.Exit(0);
-                }
-            }
-            Console.Clear();
-            Console.WriteLine("you lost");
-            Console.Beep(); Thread.Sleep(2000); Console.Clear();
-            Console.WriteLine("im not surprised");
-            Console.Beep(); Thread.Sleep(2000); Console.Clear();
-            Environment.Exit(0);
+            ////insialise the random class and tell the player what to do
+            //Console.WriteLine("random Number Between 1 and 100 has been generated: try to guess it in 7 attempts");
+            //Random random = new Random();
+            ////generate number and initalise attempts
+            //int num = random.Next(1, 100);
+            //int attempts = 7;
+            //int input = 0;
+            ////a loop that ends once the player has 0 lives
+            //while (attempts != 0)
+            //{
+            //    //gets player input
+            //    try { input = int.Parse(Console.ReadLine()); }
+            //    catch
+            //    {
+            //        Console.WriteLine("do i have to mention its also NOT a letter?");
+            //        Console.Beep();
+            //    }
+            //    //a few "if" statemtents for the posibilities
+            //    //wrong answers give a hint and print out how many lives you have left
+            //    if (input > num) { Console.WriteLine("lower (: lives left:" + attempts); attempts--; }
+            //    if (input < num) { Console.WriteLine("higher lives left:" + attempts); attempts--; }
+            //    if (input == num)
+            //    {
+            //        Console.Clear();
+            //        //the very enthusiastic Win screen
+            //        Console.Beep(); Console.WriteLine("fine you win..");
+            //        Thread.Sleep(4000);
+            //        Environment.Exit(0);
+            //    }
+            //}
+            //Console.Clear();
+            //Console.WriteLine("you lost");
+            //Console.Beep(); Thread.Sleep(2000); Console.Clear();
+            //Console.WriteLine("im not surprised");
+            //Console.Beep(); Thread.Sleep(2000); Console.Clear();
+            //Environment.Exit(0);
+            
 
             Console.ReadLine();
 
@@ -306,13 +328,13 @@ namespace Minecraft
             {
                 res = true;
             }
-            
+
             return res;
         }
-        static bool GetRadius_forplayer(Entity mob1, Player plr, int distance)
+        static bool GetRadius_forplayer(Cordinates object1, Cordinates object2, int distance)
         {
             bool res = false;
-            if (mob1.cordinates.x > plr.x - distance && mob1.cordinates.x < plr.x + distance)
+            if (object1.x > object2.x - distance && object1.x < object2.x + distance)
             {
                 res = true;
             }
@@ -320,7 +342,7 @@ namespace Minecraft
             return res;
         }
 
-        private Cordinates Convert_cor(int x, int y)
+        private static Cordinates Convert_cor(int x, int y)
         {
             Cordinates cords = new Cordinates();
             cords.y = y;
@@ -390,7 +412,7 @@ namespace Minecraft
                     {
                         foreach (Entity entity in game.Existing_Entities)
                         {
-                            Explosion(game, grid, entity.cordinates);
+                            Explosion(game, grid, entity.cordinates,player);
                             WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
                             game.Existing_Entities.Remove(entity);
                         }
@@ -427,7 +449,9 @@ namespace Minecraft
 
                         Entity mob = game.Entity_list[0];
                         Entity Default = new Entity(mob.Name, mob.Health, mob.Type);
-                        Default.cordinates.x = random.Next(4, 55);
+                        //Default.cordinates.x = random.Next(4, 55);
+                        Default.cordinates.x = player.x
+                        ; Default.cordinates.y = player.y - 3;
 
 
 
@@ -711,6 +735,7 @@ namespace Minecraft
                 entity.gravity(grid, game.curent_tick);
             }
 
+            Walk_to_player(game.Existing_Entities[0], player, grid);
 
 
         }
@@ -755,7 +780,7 @@ namespace Minecraft
             Solid item = player.Block_list.Find(x => x.Name == name);
             return item;
         }
-        static void Explosion(Game game, int[,] grid, Cordinates pos)
+        static void Explosion(Game game, int[,] grid, Cordinates pos,Player player)
         {
             game.delay(400);
             Solid air = new Solid("air", 0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
@@ -769,11 +794,22 @@ namespace Minecraft
 
             Fill_Index_Cord2(x - range, y - range, x + range + 1, y + range + 1, grid, air, 30);
             Fill_Index_Cord2(x - range_max, y - range_max - range, x + range_max + 1, y + range_max + 1 - range, grid, air, 2);
-            
 
+            if(GetRadius_forplayer(pos, Convert_cor(player.x, player.y),range_max)) { player.health -= 50; }
+            if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range)) { player.health -= 50; }
         }
 
-        
+        static void Walk_to_player(Entity entity, Player player, int[,] grid)
+        {
+            if (player.x < entity.cordinates.x)
+            {
+                if (grid[player.y, entity.cordinates.x - 1] == 0) {
+                    entity.cordinates.x--;
+                        }
+            }
+        }
+
+
 
 
     }
