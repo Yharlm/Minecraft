@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography.X509Certificates;
@@ -53,7 +54,7 @@ namespace Minecraft
         }
 
     }
-
+    
     class Game : Player
     {
         protected static int origRow;
@@ -87,18 +88,24 @@ namespace Minecraft
             Existing_Entities.Add(mob);
             //number++;
         }
-        public void delay(double delay)
+
+        protected double count = 0;
+        public bool delay(double delay)
         {
-            double time = 0;
-            while (delay < time)
+            if (curent_tick)
             {
-                if (curent_tick)
-                {
-                    time++;
-                }
+                count += 1;
+            }
+            if (count == delay)
+            {
+                count = 0;
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
-
 
         public void gravity(int[,] grid, Game game, List<Entity> Exists)
         {
@@ -174,7 +181,7 @@ namespace Minecraft
         }
         public void Shoot_WithImaginaryProjectiles()
         {
-            
+
         }
 
     }
