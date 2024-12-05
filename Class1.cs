@@ -15,12 +15,13 @@ namespace Minecraft
     class Player : Cordinates
 
     {
-
+        
         public int health = 100;
         public Entity held = null;
         public bool Holding = false;
         public List<Non_solid> Block_Back_list = new List<Non_solid>();
         public List<Solid> Block_list = new List<Solid>();
+
 
         public bool is_swiming = false;
         public int hotbar;
@@ -34,7 +35,10 @@ namespace Minecraft
         public int x_size = 70;
         public int y_size = 34;
         public bool grounded = false;
-
+        public Solid GetBlock(string name)
+        {
+            return Block_list.Find(x => x.Name == name);
+        }
     }
 
     class Inventory : Player
@@ -106,7 +110,7 @@ namespace Minecraft
                 return false;
             }
         }
-
+        
         public void gravity(int[,] grid, Game game, List<Entity> Exists)
         {
             foreach (Entity ent in Exists)
@@ -167,17 +171,47 @@ namespace Minecraft
     }
     internal class Behaviour
     {
-        class pig : Behaviour
+        protected static int origRow;
+        protected static int origCol;
+
+        protected static void WriteAt(string s, int x, int y)
+        {
+            try
+            {
+                Console.SetCursorPosition(origCol + x, origRow + y);
+
+                Console.Write(s);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+
+            }
+        }
+        
+        public static void Walk_to_player(Entity entity, Player player, int[,] grid, Game game)
         {
 
-        }
-        public void Walk_around()
-        {
-            //code here lol
-        }
-        public void Walk_To_player(int speed)
-        {
-            //code here lol
+            int speed = 2;
+            if (player.x < entity.cordinates.x)
+            {
+
+                if (grid[entity.cordinates.y, entity.cordinates.x - 1] == 0 && game.delay(speed))
+                {
+                    WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
+                    entity.cordinates.x--;
+                }
+
+            }
+            else if (player.x > entity.cordinates.x)
+            {
+
+                if (grid[entity.cordinates.y, entity.cordinates.x + 1] == 0 && game.delay(speed))
+                {
+                    WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
+                    entity.cordinates.x++;
+                }
+
+            }
         }
         public void Shoot_WithImaginaryProjectiles()
         {
@@ -185,13 +219,13 @@ namespace Minecraft
         }
 
     }
-    class Entity(string name, int health, Behaviour type)
+    class Entity(string name, int health, string type)
     {
 
         public string Name = name;
         public int Health = health;
-        public Behaviour Type = type;
-
+        public string Type = type;
+        public List<Behaviour> mob_ais= new List<Behaviour>();
         protected static int origRow;
         protected static int origCol;
 
