@@ -54,7 +54,7 @@ namespace Minecraft
         }
 
     }
-    
+
     class Game : Player
     {
         protected static int origRow;
