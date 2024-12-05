@@ -4,7 +4,16 @@ namespace Minecraft
     class Program
     {
 
-
+        static void Entity_behaviour(Game game, Player player,Entity entity, int[,] grid)
+        {
+            string behaviour = entity.Type.ToString();
+            switch (behaviour)
+            {
+                case "Pig":
+                    Walk_to_player(entity, player,grid,game);
+                    break;
+            }
+        }
 
         protected static int origRow;
         protected static int origCol;
@@ -54,9 +63,21 @@ namespace Minecraft
 
                 Default = new Solid("waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
                 Default = new Solid("Leaves", 7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green); player.Block_list.Add(Default);
+                Default = new Solid("Coal_ore", 8, "▄▀", ConsoleColor.DarkGray, ConsoleColor.Black); player.Block_list.Add(Default);
+
+
+
+                
+
+
+
+
+
+
 
                 Entity Mob = new Entity(null, 0, null); overworld.Entity_list.Add(Mob);
-                Mob = new Entity("pig", 0, null); overworld.Entity_list.Add(Mob);
+
+                Mob = new Entity("pig", 10, "Pig"); overworld.Entity_list.Add(Mob);
                 Mob = new Entity("TNT", 0, null); overworld.Entity_list.Add(Mob);
                 //Entity pig = new Entity("pig", 10, null); Mob pig.gravity(grid);
 
@@ -224,55 +245,47 @@ namespace Minecraft
 
             Player player = (Player)instance;
             ConsoleColor Default = ConsoleColor.Cyan;
-            Block_ids air = new Block_ids(0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
-            Block_ids Grass = new Block_ids(1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow);
-            Block_ids dirt = new Block_ids(2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow);
-            Block_ids stone = new Block_ids(3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
-            Block_ids wood = new Block_ids(4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow);
-            Block_ids water = new Block_ids(5, "██", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
-            Block_ids waterTop = new Block_ids(6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
-            Block_ids leaves = new Block_ids(7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green);
 
+            //Default = new Solid("air", 0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan); player.Block_list.Add(Default);
+            //Default = new Solid("Grass", 1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
+            //Default = new Solid("Dirt", 2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
+            //Default = new Solid("Stone", 3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray); player.Block_list.Add(Default);
+            //Default = new Solid("Log", 4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
+            //Background = new Non_solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_Back_list.Add(Background);
+            //"waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
+            //Default = new Solid("Leaves", 7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green); player.Block_list.Add(Default);
 
 
             Structure tree = new Structure();
             tree.Struct = new int[,]{
-                { 0,0,1,0,0 },
-                { 0,0,1,0,0 },
-                { 0,0,1,0,0 },
-                { 0,0,1,0,0 },
-                { 0,0,1,0,0 }
+                { 0,7,7,7,0 },
+                { 7,7,7,7,7 },
+                { 7,7,7,7,7 },
+                { 0,0,4,0,0 },
+                { 0,0,4,0,0 }
             };
-            Structure Leaves = new Structure();
-            Leaves.Struct = new int[,]{
-                { 0,1,1,1,0 },
-                { 1,1,1,1,1 },
-                { 1,1,1,1,1 },
-                { 0,0,0,0,0 },
-                { 0,0,0,0,0 }
-            };
+            
             Structure House = new Structure();
             House.Struct = new int[,]{
-                { 1,1,1,1,1,1,1,1 },
-                { 1,0,0,0,0,0,0,1 },
-                { 1,0,0,0,0,0,0,1 },
-                { 1,0,0,0,0,0,0,1 },
-                { 1,0,0,0,0,0,0,1 }
+                { 4,4,4,4,4,4,4,4 },
+                { 4,0,0,0,0,0,0,4 },
+                { 0,0,0,0,0,0,0,4 },
+                { 0,0,0,0,0,0,0,4 },
+                { 3,3,3,3,3,3,3,3 }
             };
 
 
-            Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
-            Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
-            Fill_block(54, 6, grid, player.Block_list.Find(x => x.id == 5));
-            structure(tree, 11, grid, wood, game);
-            structure(Leaves, 11, grid, leaves, game);
-            structure(House, 31, grid, stone, game);
+            Fill_Index_Cord(0, 20, 60, 30, grid, player.GetBlock("Dirt"));
+            Fill_Index_Cord(0, 19, 60, 20, grid, player.GetBlock("Grass"));
+            Fill_block(54, 6, grid, player.GetBlock("Dirt"));
+            structure(tree, 11, grid, player);
+            structure(House, 31, grid, player);
         }
-
-        static void structure(object struc, int Local_x, int[,] grid, object Block, Game game)
+       
+        static void structure(object struc, int Local_x, int[,] grid, Player game)
         {
             Structure structure = (Structure)struc;
-            Block_ids block = (Block_ids)Block;
+            //Block_ids block = (Block_ids)Block;
             //Solid tile = (Solid)Block;
             //int[,] str =
             //{
@@ -297,18 +310,18 @@ namespace Minecraft
                 for (int j = Local_x; j < Local_x + x; j++)
                 {
 
-
-                    if (structure.Struct[i - Local_y, j - Local_x] == 1)
-                    {
+                    int ID = structure.Struct[i - Local_y, j - Local_x];
 
 
-                        Console.ForegroundColor = block.FG;
-                        Console.BackgroundColor = block.BG;
-                        grid[i, j] = block.id;
-                        WriteAt(block.Texture, j * 2, i);
-                        Console.ForegroundColor = default;
-                        Console.BackgroundColor = ConsoleColor.Cyan;
-                    }
+                        Solid block = game.Block_list.Find(x => x.id == structure.Struct[i - Local_y, j - Local_x]);
+                        Fill_block(j, i, grid, block);
+                        //Console.ForegroundColor = block.FG;
+                        //Console.BackgroundColor = block.BG;
+                        //grid[i, j] = block.id;
+                        //WriteAt(block.Texture, j * 2, i);
+                        //Console.ForegroundColor = default;
+                        //Console.BackgroundColor = ConsoleColor.Cyan;
+                    
 
                     //grid[i, j] = structure.Struct[i - Local_y, j - Local_x];
                     //WriteAt(game.Block_list(1).t, j * 2, i);
@@ -320,6 +333,7 @@ namespace Minecraft
 
 
         }
+
 
         static bool GetRadius(Entity mob1, Player plr, int distance)
         {
@@ -659,7 +673,7 @@ namespace Minecraft
             Console.ForegroundColor = default;
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
-        static void Fill_Index_Cord(int x1, int y1, int x2, int y2, int[,] grid, Block_ids Block)
+        static void Fill_Index_Cord(int x1, int y1, int x2, int y2, int[,] grid, Solid Block)
         {
 
             for (int j = y1; j < y2; j++)
@@ -738,13 +752,11 @@ namespace Minecraft
             {
                 foreach (Entity entity in game.Existing_Entities)
                 {
-
+                    Entity_behaviour(game,player,entity,grid);
                     entity.gravity(grid, game.curent_tick);
                     try { Walk_to_player(entity, player, grid, game); }
                     catch { }
                 }
-
-
 
             }
         }
