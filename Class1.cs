@@ -15,7 +15,7 @@ namespace Minecraft
     class Player : Cordinates
 
     {
-        
+
         public int health = 100;
         public Entity held = null;
         public bool Holding = false;
@@ -110,7 +110,7 @@ namespace Minecraft
                 return false;
             }
         }
-        
+
         public void gravity(int[,] grid, Game game, List<Entity> Exists)
         {
             foreach (Entity ent in Exists)
@@ -187,7 +187,7 @@ namespace Minecraft
 
             }
         }
-        
+
         public static void Walk_to_player(Entity entity, Player player, int[,] grid, Game game)
         {
 
@@ -225,7 +225,7 @@ namespace Minecraft
         public string Name = name;
         public int Health = health;
         public string Type = type;
-        public List<Behaviour> mob_ais= new List<Behaviour>();
+        public List<Behaviour> mob_ais = new List<Behaviour>();
         protected static int origRow;
         protected static int origCol;
 
