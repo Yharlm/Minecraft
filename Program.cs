@@ -263,17 +263,17 @@ namespace Minecraft
 
             Fill_Index_Cord(0, 20, 60, 30, grid, dirt);
             Fill_Index_Cord(0, 19, 60, 20, grid, Grass);
-            Fill_block(54, 6, grid, player.Block_list[5]);
-            structure(tree, 11, grid, wood);
-            structure(Leaves, 11, grid, leaves);
-            structure(House, 31, grid, stone);
+            Fill_block(54, 6, grid, player.Block_list.Find(x => x.id == 5));
+            structure(tree, 11, grid, wood, game);
+            structure(Leaves, 11, grid, leaves, game);
+            structure(House, 31, grid, stone, game);
         }
 
-        static void structure(object struc, int Local_x, int[,] grid, object Block)
+        static void structure(object struc, int Local_x, int[,] grid, object Block, Game game)
         {
             Structure structure = (Structure)struc;
             Block_ids block = (Block_ids)Block;
-
+            //Solid tile = (Solid)Block;
             //int[,] str =
             //{
             //    {0,0,1,0,0 },
@@ -310,6 +310,10 @@ namespace Minecraft
                         Console.BackgroundColor = ConsoleColor.Cyan;
                     }
 
+                    //grid[i, j] = structure.Struct[i - Local_y, j - Local_x];
+                    //WriteAt(game.Block_list(1).t, j * 2, i);
+                    //Console.ForegroundColor = default;
+                    //Console.BackgroundColor = ConsoleColor.Cyan;
 
                 }
             }
@@ -404,6 +408,7 @@ namespace Minecraft
             switch (player.Input)
             {
                 case "N":
+
                     try
                     {
 
@@ -413,9 +418,11 @@ namespace Minecraft
                             Explosion(game, grid, entity.cordinates, player);
                             WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
                             game.Existing_Entities.Remove(entity);
+
                         }
                     }
                     catch { }
+
                     break;
                 case "Q":
                     if (player.Holding == true)
@@ -715,6 +722,7 @@ namespace Minecraft
 
         static void Fill_block(int x, int y, int[,] grid, Solid Block)
         {
+
             Console.ForegroundColor = Block.FG;
             Console.BackgroundColor = Block.BG;
             grid[y, x] = Block.id;
@@ -726,17 +734,19 @@ namespace Minecraft
         static void Entity_update(int[,] grid, List<Entity> Entity_list, Game game, Player player)
         {
             PlayerAbilities(grid, player, game);
-
-            foreach (Entity entity in game.Existing_Entities)
+            if (game.Existing_Entities.Count != 0)
             {
+                foreach (Entity entity in game.Existing_Entities)
+                {
 
-                entity.gravity(grid, game.curent_tick);
+                    entity.gravity(grid, game.curent_tick);
+                    try { Walk_to_player(entity, player, grid, game); }
+                    catch { }
+                }
+
+
+
             }
-
-            try { Walk_to_player(game.Existing_Entities[0], player, grid, game); }
-            catch { }
-
-
         }
 
         private static void PlayerAbilities(int[,] grid, Player player, Game game)
@@ -803,7 +813,7 @@ namespace Minecraft
         static void Walk_to_player(Entity entity, Player player, int[,] grid, Game game)
         {
 
-            int speed = 5;
+            int speed = 2;
             if (player.x < entity.cordinates.x)
             {
 
