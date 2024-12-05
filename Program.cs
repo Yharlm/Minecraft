@@ -4,15 +4,33 @@ namespace Minecraft
     class Program
     {
 
-        static void Entity_behaviour(Game game, Player player,Entity entity, int[,] grid)
+        static void Entity_behaviour(Game game, Player player, int[,] grid)
         {
-            string behaviour = entity.Type.ToString();
-            switch (behaviour)
+            try
             {
-                case "Pig":
-                    Walk_to_player(entity, player,grid,game);
-                    break;
+                foreach (Entity mob in game.Existing_Entities)
+                {
+                    string behaviour = mob.Type;
+                    switch (behaviour)
+                    {
+                        case "Pig":
+
+                            //try { Walk_to_player(mob, player, grid, game); }
+                            //catch { }
+                            if (mob.Health <= 0) { Kill_entity(game, mob); }
+                            break;
+
+                    }
+                }
             }
+            catch { }
+        }
+
+        private static void Kill_entity(Game game, Entity entity)
+        {
+
+            WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
+            game.Existing_Entities.Remove(entity);
         }
 
         protected static int origRow;
@@ -67,7 +85,7 @@ namespace Minecraft
 
 
 
-                
+
 
 
 
@@ -116,6 +134,7 @@ namespace Minecraft
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     GetInput(grid, player, overworld);
                     Entity_update(grid, overworld.Existing_Entities, overworld, player);
+
                     BlockUpdate(grid, player, overworld);
                     PrintUI(player);
 
@@ -208,7 +227,7 @@ namespace Minecraft
             //Console.Beep(); Thread.Sleep(2000); Console.Clear();
             //Environment.Exit(0);
 
-
+            Console.WriteLine(Console.ReadKey().Key.ToString());
             Console.ReadLine();
 
 
@@ -264,7 +283,7 @@ namespace Minecraft
                 { 0,0,4,0,0 },
                 { 0,0,4,0,0 }
             };
-            
+
             Structure House = new Structure();
             House.Struct = new int[,]{
                 { 4,4,4,4,4,4,4,4 },
@@ -281,7 +300,7 @@ namespace Minecraft
             structure(tree, 11, grid, player);
             structure(House, 31, grid, player);
         }
-       
+
         static void structure(object struc, int Local_x, int[,] grid, Player game)
         {
             Structure structure = (Structure)struc;
@@ -313,15 +332,15 @@ namespace Minecraft
                     int ID = structure.Struct[i - Local_y, j - Local_x];
 
 
-                        Solid block = game.Block_list.Find(x => x.id == structure.Struct[i - Local_y, j - Local_x]);
-                        Fill_block(j, i, grid, block);
-                        //Console.ForegroundColor = block.FG;
-                        //Console.BackgroundColor = block.BG;
-                        //grid[i, j] = block.id;
-                        //WriteAt(block.Texture, j * 2, i);
-                        //Console.ForegroundColor = default;
-                        //Console.BackgroundColor = ConsoleColor.Cyan;
-                    
+                    Solid block = game.Block_list.Find(x => x.id == structure.Struct[i - Local_y, j - Local_x]);
+                    Fill_block(j, i, grid, block);
+                    //Console.ForegroundColor = block.FG;
+                    //Console.BackgroundColor = block.BG;
+                    //grid[i, j] = block.id;
+                    //WriteAt(block.Texture, j * 2, i);
+                    //Console.ForegroundColor = default;
+                    //Console.BackgroundColor = ConsoleColor.Cyan;
+
 
                     //grid[i, j] = structure.Struct[i - Local_y, j - Local_x];
                     //WriteAt(game.Block_list(1).t, j * 2, i);
@@ -390,14 +409,14 @@ namespace Minecraft
             {
 
                 player.Input = Console.ReadKey().Key.ToString();
-                if (player.Input != "W" && player.Input != "L" && player.Input != "K")
+                if (player.Input != "Spacebar" && player.Input != "L" && player.Input != "K")
                 {
                     player.last_key = player.Input;
 
                 }
-                if (player.Input == "W")
+                if (player.Input == "Spacebar")
                 {
-                    player.special_key = "W";
+                    player.special_key = "Spacebar";
                 }
                 //if(grid[player.y - 1, player.x + 1] == 5)
                 //{
@@ -421,6 +440,11 @@ namespace Minecraft
             //player.Selected_block = dirt;
             switch (player.Input)
             {
+
+                case "Z":
+                    Attack(game, player);
+                    WriteAt("  ", player.x * 2, player.y);
+                    break;
                 case "N":
 
                     try
@@ -466,7 +490,7 @@ namespace Minecraft
                         WriteAt(game.Existing_Entities.Count().ToString(), 24, 3);
                         Console.ForegroundColor = default;
 
-                        Entity mob = game.Entity_list[0];
+                        Entity mob = game.Entity_list[1];
                         Entity Default = new Entity(mob.Name, mob.Health, mob.Type);
                         //Default.cordinates.x = random.Next(4, 55);
                         Default.cordinates.x = player.x
@@ -490,9 +514,9 @@ namespace Minecraft
 
                     break;
                 case "K":
-                    if (player.special_key == "W")
+                    if (player.special_key == "Spacebar")
                     {
-                        if (player.special_key == "W")
+                        if (player.special_key == "Spacebar")
                         {
                             Fill_block(player.x, player.y - 2, grid, air); player.special_key = null;
 
@@ -532,7 +556,7 @@ namespace Minecraft
 
                     break;
                 case "L":
-                    if (player.special_key == "W")
+                    if (player.special_key == "Spacebar")
                         if (grid[player.y + 1, player.x] == 0 && grid[player.y + 2, player.x] != 0)
                         {
                             Fill_block(player.x, player.y + 1, grid, player.Selected_block);
@@ -562,7 +586,7 @@ namespace Minecraft
                         }
 
                     break;
-                case "W":
+                case "Spacebar":
                     if (grid[player.y + 1, player.x] != 0)
                     {
 
@@ -747,15 +771,16 @@ namespace Minecraft
 
         static void Entity_update(int[,] grid, List<Entity> Entity_list, Game game, Player player)
         {
+            Entity_behaviour(game, player, grid);
+
             PlayerAbilities(grid, player, game);
             if (game.Existing_Entities.Count != 0)
             {
                 foreach (Entity entity in game.Existing_Entities)
                 {
-                    Entity_behaviour(game,player,entity,grid);
                     entity.gravity(grid, game.curent_tick);
-                    try { Walk_to_player(entity, player, grid, game); }
-                    catch { }
+                    //try { Walk_to_player(entity, player, grid, game); }
+                    //catch { }
                 }
 
             }
@@ -849,6 +874,21 @@ namespace Minecraft
 
 
         }
+
+        static void Attack(Game game, Player player)
+        {
+            foreach (Entity entity in game.Existing_Entities)
+            {
+                if (player.x + 1 == entity.cordinates.x)
+                {
+                    entity.Health -= 2;
+                    entity.cordinates.x++;
+                    entity.cordinates.y++;
+                }
+            }
+        }
+
+
 
 
 
