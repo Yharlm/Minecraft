@@ -227,8 +227,10 @@ namespace Minecraft
             //Console.Beep(); Thread.Sleep(2000); Console.Clear();
             //Environment.Exit(0);
 
-            Console.WriteLine(Console.ReadKey().Key.ToString());
-            Console.ReadLine();
+            //Console.WriteLine(Console.ReadKey().Key.ToString());
+            //Console.ReadLine();
+
+
 
 
         }
@@ -297,10 +299,55 @@ namespace Minecraft
             Fill_Index_Cord(0, 20, 60, 30, grid, player.GetBlock("Dirt"));
             Fill_Index_Cord(0, 19, 60, 20, grid, player.GetBlock("Grass"));
             Fill_block(54, 6, grid, player.GetBlock("Dirt"));
+            //GenerateWorld(game, grid,player);
             structure(tree, 11, grid, player);
             structure(House, 31, grid, player);
         }
 
+        private static void GenerateWorld(Game game, int[,] grid,Player player)
+        {
+            Random random = new Random();
+            int[] graph = new int[71];
+            
+            for(int i = 0; i<60;i++)
+            {
+                if (random.Next(1, 10) > 7)
+                {
+                    graph[i] = random.Next(1, 3);
+                }
+
+            }
+            
+            for (int i = 10; i < 60; i++)
+            {
+                if(graph[i] > 0)
+                {
+                    
+                    int Peek = i;
+                    int counter = 0;
+                    while (Peek > 0)
+                    {
+                        graph[graph[i] + counter] = Peek;
+                        graph[graph[i] - counter] = Peek;
+                        Peek--;
+                        counter++;
+                    }
+                }
+            }
+            //while (Peek > 0)
+            //{
+            //    graph[height + counter] = Peek;
+            //    graph[height - counter] = Peek;
+            //    Peek--;
+            //    counter++;
+            //}
+            for (int i = 10; i < 60; i++)
+            {
+                Fill_block(i, graph[i]+20, grid, player.GetBlock("Stone"));
+            }
+        }
+
+        
         static void structure(object struc, int Local_x, int[,] grid, Player game)
         {
             Structure structure = (Structure)struc;
@@ -328,12 +375,16 @@ namespace Minecraft
             {
                 for (int j = Local_x; j < Local_x + x; j++)
                 {
-
+                    if(structure.Struct[i - Local_y, j - Local_x] == 0)
+                    {
+                        continue;
+                    }
                     int ID = structure.Struct[i - Local_y, j - Local_x];
 
 
                     Solid block = game.Block_list.Find(x => x.id == structure.Struct[i - Local_y, j - Local_x]);
                     Fill_block(j, i, grid, block);
+
                     //Console.ForegroundColor = block.FG;
                     //Console.BackgroundColor = block.BG;
                     //grid[i, j] = block.id;
@@ -441,9 +492,9 @@ namespace Minecraft
             switch (player.Input)
             {
 
-                case "Z":
-                    Attack(game, player);
-                    WriteAt("  ", player.x * 2, player.y);
+                case "r":
+                    Attack(game, player,grid);
+                    
                     break;
                 case "N":
 
@@ -514,46 +565,49 @@ namespace Minecraft
 
                     break;
                 case "K":
-                    if (player.special_key == "Spacebar")
+                    if (Attack(game, player, grid) == false)
                     {
+
                         if (player.special_key == "Spacebar")
                         {
-                            Fill_block(player.x, player.y - 2, grid, air); player.special_key = null;
+                            if (player.special_key == "Spacebar")
+                            {
+                                Fill_block(player.x, player.y - 2, grid, air); player.special_key = null;
 
+                            }
+                            else if (player.last_key == "D")
+                            {
+                                Fill_block(player.x + 1, player.y - 2, grid, air);
+                            }
+                            else if (player.last_key == "A")
+                            {
+                                Fill_block(player.x - 1, player.y - 2, grid, air);
+                            }
                         }
+
                         else if (player.last_key == "D")
                         {
-                            Fill_block(player.x + 1, player.y - 2, grid, air);
+                            if (grid[player.y - 1, player.x + 1] != 0)
+                                Fill_block(player.x + 1, player.y - 1, grid, air);
+                            else if (grid[player.y, player.x + 1] != 0)
+                                Fill_block(player.x + 1, player.y, grid, air);
+                            else if (grid[player.y - 2, player.x + 1] != 0)
+                                Fill_block(player.x + 1, player.y - 2, grid, air);
                         }
                         else if (player.last_key == "A")
                         {
-                            Fill_block(player.x - 1, player.y - 2, grid, air);
+                            if (grid[player.y - 1, player.x - 1] != 0)
+                                Fill_block(player.x - 1, player.y - 1, grid, air);
+                            else if (grid[player.y, player.x - 1] != 0)
+                                Fill_block(player.x - 1, player.y, grid, air);
+                            else if (grid[player.y - 2, player.x - 1] != 0)
+                                Fill_block(player.x - 1, player.y - 2, grid, air);
+                        }
+                        else if (player.last_key == "S")
+                        {
+                            Fill_block(player.x, player.y + 1, grid, air);
                         }
                     }
-
-                    else if (player.last_key == "D")
-                    {
-                        if (grid[player.y - 1, player.x + 1] != 0)
-                            Fill_block(player.x + 1, player.y - 1, grid, air);
-                        else if (grid[player.y, player.x + 1] != 0)
-                            Fill_block(player.x + 1, player.y, grid, air);
-                        else if (grid[player.y - 2, player.x + 1] != 0)
-                            Fill_block(player.x + 1, player.y - 2, grid, air);
-                    }
-                    else if (player.last_key == "A")
-                    {
-                        if (grid[player.y - 1, player.x - 1] != 0)
-                            Fill_block(player.x - 1, player.y - 1, grid, air);
-                        else if (grid[player.y, player.x - 1] != 0)
-                            Fill_block(player.x - 1, player.y, grid, air);
-                        else if (grid[player.y - 2, player.x - 1] != 0)
-                            Fill_block(player.x - 1, player.y - 2, grid, air);
-                    }
-                    else if (player.last_key == "S")
-                    {
-                        Fill_block(player.x, player.y + 1, grid, air);
-                    }
-
                     break;
                 case "L":
                     if (player.special_key == "Spacebar")
@@ -875,23 +929,32 @@ namespace Minecraft
 
         }
 
-        static void Attack(Game game, Player player)
+        private static bool Attack(Game game, Player player, int[,] grid)
         {
+            bool is_there = false;
             foreach (Entity entity in game.Existing_Entities)
             {
-                if (player.x + 1 == entity.cordinates.x)
+                if (player.x + 1 == entity.cordinates.x && player.y == entity.cordinates.y)
                 {
+                    WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
                     entity.Health -= 2;
-                    entity.cordinates.x++;
-                    entity.cordinates.y++;
+                    if (grid[entity.cordinates.y, entity.cordinates.x+1] == 0) { entity.cordinates.x++; }
+                    is_there = true;
+                    entity.cordinates.y--;
                 }
+                else if (player.x - 1 == entity.cordinates.x && player.y == entity.cordinates.y)
+                {
+                    WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
+                    entity.Health -= 2;
+                    if (grid[entity.cordinates.y, entity.cordinates.x - 1] == 0) { entity.cordinates.x--; }
+                    is_there = true;
+                    entity.cordinates.y--;
+                }
+               
+                
             }
+            return is_there;
         }
-
-
-
-
-
-
     }
+
 }
