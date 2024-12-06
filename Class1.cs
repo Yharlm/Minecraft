@@ -255,7 +255,7 @@ namespace Minecraft
 
                 WriteAt("  ", cordinates.x * 2, cordinates.y);
 
-                WriteAt("  ", cordinates.x * 2, cordinates.y - 1);
+                
                 cordinates.y++;
 
 
