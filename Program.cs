@@ -1,4 +1,6 @@
 //using ConsoleNewMinigame;
+using System.Net.Security;
+
 namespace Minecraft
 {
     class Program
@@ -60,8 +62,8 @@ namespace Minecraft
                 Console.CursorVisible = false;
                 Console.BackgroundColor = ConsoleColor.Cyan;
                 Console.Clear();
-                Console.ForegroundColor = ConsoleColor.White;
-                WriteAt("Minecraft v0.0.2.7, Added entities, also temporearely ability to inf jump lol", 1, 1);
+                Console.ForegroundColor = ConsoleColor.Green;
+                WriteAt("Minecraft v0.0.3, Now with world generation!", 1, 1);
                 Console.ForegroundColor = default;
 
                 Game overworld = new Game();
@@ -77,11 +79,42 @@ namespace Minecraft
                 Default = new Solid("Stone", 3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray); player.Block_list.Add(Default);
                 Default = new Solid("Log", 4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
                 Background = new Non_solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_Back_list.Add(Background);
+                Default = new Solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_Back_list.Add(Background);
                 //Default = new Solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
 
                 Default = new Solid("waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
                 Default = new Solid("Leaves", 7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green); player.Block_list.Add(Default);
                 Default = new Solid("Coal_ore", 8, "▄▀", ConsoleColor.DarkGray, ConsoleColor.Black); player.Block_list.Add(Default);
+
+
+
+                //Sprite magicMissile = new Sprite();
+                
+                //magicMissile.Sprites[0, 0] = "▀ ▄       "; 
+                //magicMissile.Sprites[0, 1] = "  ▀ ▄     ";
+                //magicMissile.Sprites[0, 2] = "    █▄    ";
+                //magicMissile.Sprites[0, 3] = "    ▀     ";
+                //magicMissile.Sprites[0, 4] = "          ";
+
+                //string[,] Sprites =
+                //    {
+                //{
+                //    "▀ ▄       ",
+                //    "  ▀ ▄     ",
+                //    "    █▄    ",
+                //    "    ▀     ",
+                //    "          "
+                //}
+                //    };
+
+
+
+
+
+
+
+
+
 
 
 
@@ -108,7 +141,7 @@ namespace Minecraft
                 //Move this to the block method using switch case or make a new class block
 
 
-                int[,] grid = new int[100, 100];
+                int[,] grid = new int[100, 200];
                 BuildWorld(grid, player, overworld);
                 double tick = 0.05;
 
@@ -227,9 +260,36 @@ namespace Minecraft
             //Console.Beep(); Thread.Sleep(2000); Console.Clear();
             //Environment.Exit(0);
 
-            //Console.WriteLine(Console.ReadKey().Key.ToString());
-            //Console.ReadLine();
-
+            //Console.WriteLine(Console.ReadKey().Key.ToString());  █▀▄ 
+            Console.ForegroundColor = ConsoleColor.Red;
+            Thread.Sleep(10);
+            WriteAt("▀ ▄       ", 0, 0);
+            WriteAt("  ▀ ▄     ", 0, 1);
+            WriteAt("    █▄    ", 0, 2);
+            WriteAt("    ▀     ", 0, 3);
+            WriteAt("          ", 0, 4);
+            Thread.Sleep(40);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            WriteAt("   ▄      ", 0, 0);
+            WriteAt("    ▀▄    ", 0, 1);
+            WriteAt("     █▄   ", 0, 2);
+            WriteAt("   ▄██▀   ", 0, 3);
+            WriteAt("▄██▀▀     ", 0, 4);
+            Thread.Sleep(50);
+            Console.ForegroundColor = ConsoleColor.White;
+            WriteAt("          ", 0, 0);
+            WriteAt("     ▄    ", 0, 1);
+            WriteAt("      ▄   ", 0, 2);
+            WriteAt("     █▀   ", 0, 3);
+            WriteAt("▄ ▄█▀▀    ", 0, 4);
+            Thread.Sleep(100);
+            WriteAt("          ", 0, 0);
+            WriteAt("          ", 0, 1);
+            WriteAt("          ", 0, 2);
+            WriteAt("          ", 0, 3);
+            WriteAt("          ", 0, 4);
+            Console.ReadLine();
+            Console.ForegroundColor = default;
 
 
 
@@ -263,22 +323,14 @@ namespace Minecraft
 
         private static void BuildWorld(int[,] grid, object instance, Game game)
         {
-
+            Random random = new Random();
             Player player = (Player)instance;
             ConsoleColor Default = ConsoleColor.Cyan;
-
-            //Default = new Solid("air", 0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan); player.Block_list.Add(Default);
-            //Default = new Solid("Grass", 1, "▀▀", ConsoleColor.DarkGreen, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
-            //Default = new Solid("Dirt", 2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
-            //Default = new Solid("Stone", 3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray); player.Block_list.Add(Default);
-            //Default = new Solid("Log", 4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
-            //Background = new Non_solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_Back_list.Add(Background);
-            //"waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
-            //Default = new Solid("Leaves", 7, "▄▀", ConsoleColor.DarkGreen, ConsoleColor.Green); player.Block_list.Add(Default);
 
 
             Structure tree = new Structure();
             tree.Struct = new int[,]{
+                { 0,7,7,7,0 },
                 { 0,7,7,7,0 },
                 { 7,7,7,7,7 },
                 { 7,7,7,7,7 },
@@ -296,58 +348,70 @@ namespace Minecraft
             };
 
 
-            Fill_Index_Cord(0, 20, 60, 30, grid, player.GetBlock("Dirt"));
-            Fill_Index_Cord(0, 19, 60, 20, grid, player.GetBlock("Grass"));
-            Fill_block(54, 6, grid, player.GetBlock("Dirt"));
-            //GenerateWorld(game, grid,player);
-            structure(tree, 11, grid, player);
-            structure(House, 31, grid, player);
+
+            GenerateWorld(game, grid, player);
+
+            int tree_rate = 24
+           ;
+            int Tree_r = 0;
+            for (int i = 0; i < 100; i++)
+            {
+                Tree_r = random.Next(1, tree_rate);
+                if (Tree_r >= tree_rate - 2)
+                {
+                    structure(tree, i, grid, player);
+                    i += 5;
+                }
+            }
+
+
+            //structure(House, 31, grid, player);
         }
 
-        private static void GenerateWorld(Game game, int[,] grid,Player player)
+        private static void GenerateWorld(Game game, int[,] grid, Player player)
         {
             Random random = new Random();
-            int[] graph = new int[71];
-            
-            for(int i = 0; i<60;i++)
-            {
-                if (random.Next(1, 10) > 7)
-                {
-                    graph[i] = random.Next(1, 3);
-                }
 
-            }
-            
-            for (int i = 10; i < 60; i++)
+
+            int flatness = random.Next(3, 17)
+            ;
+
+            int min = 27
+            ; int max = min + 3
+            ; int Height_min = 4
+            ;
+            int num = 0;
+            int curf = 0;
+            for (int j = 0; j < 100;)
             {
-                if(graph[i] > 0)
+                num = random.Next(min, max);
+                curf = random.Next(1, flatness) + j;
+                while (curf > j)
                 {
-                    
-                    int Peek = i;
-                    int counter = 0;
-                    while (Peek > 0)
+
+                    Fill_block(j, num, grid, player.GetBlock("Grass"));
+
+                    int counter = 1;
+                    while (counter < 5)
                     {
-                        graph[graph[i] + counter] = Peek;
-                        graph[graph[i] - counter] = Peek;
-                        Peek--;
+                        Fill_block(j, num + counter, grid, player.GetBlock("Dirt"));
                         counter++;
                     }
+                    while (counter < 15)
+                    {
+                        Fill_block(j, num + counter, grid, player.GetBlock("Stone"));
+                        counter++;
+                    }
+                    j++;
+
                 }
-            }
-            //while (Peek > 0)
-            //{
-            //    graph[height + counter] = Peek;
-            //    graph[height - counter] = Peek;
-            //    Peek--;
-            //    counter++;
-            //}
-            for (int i = 10; i < 60; i++)
-            {
-                Fill_block(i, graph[i]+20, grid, player.GetBlock("Stone"));
+
+
             }
         }
 
-        
+
+
         static void structure(object struc, int Local_x, int[,] grid, Player game)
         {
             Structure structure = (Structure)struc;
@@ -375,7 +439,7 @@ namespace Minecraft
             {
                 for (int j = Local_x; j < Local_x + x; j++)
                 {
-                    if(structure.Struct[i - Local_y, j - Local_x] == 0)
+                    if (structure.Struct[i - Local_y, j - Local_x] == 0)
                     {
                         continue;
                     }
@@ -405,10 +469,14 @@ namespace Minecraft
         }
 
 
-        static bool GetRadius(Entity mob1, Player plr, int distance)
+        static bool GetRadius(Entity mob1, Player plr, int x, int y)
         {
             bool res = false;
-            if (mob1.cordinates.x > plr.x - distance && mob1.cordinates.x < plr.x + distance)
+            if (mob1.cordinates.x > plr.x - x && mob1.cordinates.x < plr.x + x)
+            {
+                res = true;
+            }
+            if (mob1.cordinates.y > plr.y - y && mob1.cordinates.y < plr.y + y)
             {
                 res = true;
             }
@@ -460,7 +528,7 @@ namespace Minecraft
             {
 
                 player.Input = Console.ReadKey().Key.ToString();
-                if (player.Input != "Spacebar" && player.Input != "L" && player.Input != "K")
+                if (player.Input != "Spacebar" && player.Input != "L" && player.Input != "K" && player.Input != "R")
                 {
                     player.last_key = player.Input;
 
@@ -492,9 +560,11 @@ namespace Minecraft
             switch (player.Input)
             {
 
-                case "r":
-                    Attack(game, player,grid);
-                    
+                case "R":
+                    Attack(game, player, grid, 4, 5, 2);
+                    Slash(player, game, grid);
+
+
                     break;
                 case "N":
 
@@ -565,7 +635,7 @@ namespace Minecraft
 
                     break;
                 case "K":
-                    if (Attack(game, player, grid) == false)
+                    if (Attack(game, player, grid, 1, 2, 2) == false)
                     {
 
                         if (player.special_key == "Spacebar")
@@ -608,6 +678,9 @@ namespace Minecraft
                             Fill_block(player.x, player.y + 1, grid, air);
                         }
                     }
+
+
+
                     break;
                 case "L":
                     if (player.special_key == "Spacebar")
@@ -833,6 +906,9 @@ namespace Minecraft
                 foreach (Entity entity in game.Existing_Entities)
                 {
                     entity.gravity(grid, game.curent_tick);
+                    
+                        
+                    
                     //try { Walk_to_player(entity, player, grid, game); }
                     //catch { }
                 }
@@ -850,7 +926,7 @@ namespace Minecraft
                 {
                     foreach (Entity ent in game.Existing_Entities)
                     {
-                        if (GetRadius(ent, player, 1))
+                        if (GetRadius(ent, player, 1, 0))
                         {
                             player.held = ent;
 
@@ -884,17 +960,23 @@ namespace Minecraft
         {
 
 
-            Solid air = new Solid("air", 0, "  ", ConsoleColor.DarkGray, ConsoleColor.Cyan);
+            Solid air = new Solid("air", 0, "  ", ConsoleColor.White, ConsoleColor.White);
+            Solid air2 = new Solid("air", 0, "  ", ConsoleColor.White, ConsoleColor.Yellow);
 
             int range = 4;
             int range_max = 9;
             int x = pos.x;
             int y = pos.y;
 
-
+            Cordinates cordinates = new Cordinates();
+            cordinates.x = range_max;
+            cordinates.y = range_max;
+            cordinates.x1 = x + range_max + 1;
+            cordinates.y1 = y + range_max + 1;
 
             Fill_Index_Cord2(x - range, y - range, x + range + 1, y + range + 1, grid, air, 30);
-            Fill_Index_Cord2(x - range_max, y - range_max - range, x + range_max + 1, y + range_max + 1 - range, grid, air, 2);
+            Fill_Index_Cord2(x - range_max, y - range_max - range, x + range_max + 1, y + range_max + 1 - range, grid, air2, 2);
+            Refresh_area_not(game, player, grid, cordinates, pos);
 
             if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range_max)) { player.health -= 50; }
             if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range)) { player.health -= 50; }
@@ -929,32 +1011,171 @@ namespace Minecraft
 
         }
 
-        private static bool Attack(Game game, Player player, int[,] grid)
+        private static bool Attack(Game game, Player player, int[,] grid, int knockback, int range, int dmg)
         {
             bool is_there = false;
             foreach (Entity entity in game.Existing_Entities)
             {
-                if (player.x + 1 == entity.cordinates.x && player.y == entity.cordinates.y)
+                if (GetRadius(entity, player, 5, 3) && entity.cordinates.x > player.x)
                 {
                     WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
-                    entity.Health -= 2;
-                    if (grid[entity.cordinates.y, entity.cordinates.x+1] == 0) { entity.cordinates.x++; }
+                    entity.Health -= dmg;
+                    if (grid[entity.cordinates.y, entity.cordinates.x + range] == 0) { entity.cordinates.x += knockback; }
                     is_there = true;
-                    entity.cordinates.y--;
+                    entity.cordinates.y -= knockback;
+                    entity.velocity += 1;
                 }
-                else if (player.x - 1 == entity.cordinates.x && player.y == entity.cordinates.y)
+                else if (GetRadius(entity, player, 5, 3) && entity.cordinates.x < player.x)
                 {
                     WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
-                    entity.Health -= 2;
-                    if (grid[entity.cordinates.y, entity.cordinates.x - 1] == 0) { entity.cordinates.x--; }
+                    entity.Health -= dmg;
+                    if (grid[entity.cordinates.y, entity.cordinates.x - range] == 0) { entity.cordinates.x -= knockback; }
                     is_there = true;
-                    entity.cordinates.y--;
+                    entity.cordinates.y -= knockback;
+                    entity.velocity += -1;
                 }
-               
-                
+
+
             }
             return is_there;
         }
+
+        static void Slash(Player player, Game game, int[,] grid)
+        {
+            int x = 0;
+            int y = player.y - 4;
+            if (player.last_key == "D")
+            {
+                x = (player.x + 2) * 2;
+                Cordinates cordinates = new Cordinates();
+                cordinates.x = 5;
+                cordinates.y = 5;
+                cordinates.x1 = -2;
+                cordinates.y1 = 4;
+                Console.ForegroundColor = ConsoleColor.Red;
+
+                Thread.Sleep(20);
+                WriteAt("▀ ▄       ", x, y + 0);
+                WriteAt("  ▀ ▄     ", x, y + 1);
+                WriteAt("    █▄    ", x, y + 2);
+                WriteAt("    ▀     ", x, y + 3);
+                WriteAt("          ", x, y + 4);
+                Thread.Sleep(20);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                WriteAt("   ▄      ", x, y + 0);
+                WriteAt("    ▀▄    ", x, y + 1);
+                WriteAt("     █▄   ", x, y + 2);
+                WriteAt("   ▄██▀   ", x, y + 3);
+                WriteAt("▄██▀▀     ", x, y + 4);
+                Thread.Sleep(40);
+                Console.ForegroundColor = ConsoleColor.White
+                    ;
+                WriteAt("          ", x, y + 0);
+                WriteAt("     ▄    ", x, y + 1);
+                WriteAt("      ▄   ", x, y + 2);
+                WriteAt("     █▀   ", x, y + 3);
+                WriteAt("▄ ▄█▀▀    ", x, y + 4);
+                Thread.Sleep(10);
+                WriteAt("          ", x, y + 0);
+                WriteAt("          ", x, y + 1);
+                WriteAt("          ", x, y + 2);
+                WriteAt("          ", x, y + 3);
+                WriteAt("          ", x, y + 4);
+                Refresh_area(game, player, grid, cordinates);
+                Console.ForegroundColor = default;
+            }
+            else if (player.last_key == "A")
+            {
+                Cordinates cordinates = new Cordinates();
+                cordinates.x = 5;
+                cordinates.y = 5;
+                cordinates.x1 = 6;
+                cordinates.y1 = 4;
+                x = (player.x - 6
+                    ) * 2;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Thread.Sleep(20);
+                WriteAt("       ▄ ▀", x, y + 0);
+                WriteAt("     ▄ ▀  ", x, y + 1);
+                WriteAt("    ▄█    ", x, y + 2);
+                WriteAt("     ▀    ", x, y + 3);
+                WriteAt("          ", x, y + 4);
+                Thread.Sleep(20);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                WriteAt("      ▄   ", x, y + 0);
+                WriteAt("    ▄▀    ", x, y + 1);
+                WriteAt("   ▄█     ", x, y + 2);
+                WriteAt("   ▀██▄   ", x, y + 3);
+                WriteAt("     ▀▀██▄", x, y + 4);
+                Thread.Sleep(40);
+                Console.ForegroundColor = ConsoleColor.White;
+                WriteAt("          ", x, y + 0);
+                WriteAt("    ▄     ", x, y + 1);
+                WriteAt("   ▄      ", x, y + 2);
+                WriteAt("   ▀█     ", x, y + 3);
+                WriteAt("    ▀▀█▄ ▄", x, y + 4);
+                Thread.Sleep(10);
+                WriteAt("          ", x, y + 0);
+                WriteAt("          ", x, y + 1);
+                WriteAt("          ", x, y + 2);
+                WriteAt("          ", x, y + 3);
+                WriteAt("          ", x, y + 4);
+                Refresh_area(game, player, grid, cordinates);
+            }
+
+        }
+
+        static void Refresh_area(Game game, Player player, int[,] grid, Cordinates cords)
+        {
+            int x = player.x;
+            int y = player.y;
+            int[,] local = new int[cords.y, cords.x];
+            for (int i = 0; i < local.GetLength(0); i++)
+            {
+                for (int j = 0; j < local.GetLength(1); j++)
+                {
+                    int Id = grid[i + y - cords.y1, j + x - cords.x1];
+                    var selected = player.Block_list.Find(x => x.id == Id);
+
+                    Console.BackgroundColor = selected.BG;
+                    Console.ForegroundColor = selected.FG;
+                    WriteAt(selected.Texture, (j + x - cords.x1) * 2, i + y - cords.y1);
+                    Console.BackgroundColor = ConsoleColor.Cyan;
+                    Console.ForegroundColor = default;
+                }
+            }
+        }
+
+        static void Refresh_area_not(Game game, Player player, int[,] grid, Cordinates cords,Cordinates pos)
+        {
+            int x = pos.x;
+            int y = pos.y;
+            int[,] local = new int[cords.y, cords.x];
+            for (int i = 0; i < local.GetLength(0); i++)
+            {
+                for (int j = 0; j < local.GetLength(1); j++)
+                {
+                    int Id = grid[i + y - cords.y1, j + x - cords.x1];
+                    var selected = player.Block_list.Find(x => x.id == Id);
+
+                    Console.BackgroundColor = selected.BG;
+                    Console.ForegroundColor = selected.FG;
+                    WriteAt(selected.Texture, (j + x - cords.x1) * 2, i + y - cords.y1);
+                    Console.BackgroundColor = ConsoleColor.Cyan;
+                    Console.ForegroundColor = default;
+                }
+            }
+        }
+
+        static void Magic_Missile(Game game, Player player, int[,] grid)
+        {
+            Cordinates cordinates = new Cordinates();
+            int x = player.x;
+            int y = player.y;
+            
+            WriteAt("▀█▄", x, y + 0);
+        }
+
     }
 
 }
