@@ -40,7 +40,17 @@ namespace Minecraft
             return Block_list.Find(x => x.Name == name);
         }
     }
+    class Sprite
+    {
+        public string[,] Sprites;
+    }
+    class Projectile : Entity
+    {
+        public Projectile(string name, int health, string type) : base(name, health, type)
+        {
 
+        }
+    }
     class Inventory : Player
     {
         //public List<Solid> Block_list = new List<Solid>();
@@ -49,6 +59,10 @@ namespace Minecraft
     {
         public int x = 11;
         public int y = 11;
+        public int x1 = 0;
+        public int y1 = 0;
+        public int x2 = 0;
+        public int y2 = 0;
         public Cordinates Convert_cor(int x, int y)
         {
             Cordinates cords = new Cordinates();
@@ -113,6 +127,7 @@ namespace Minecraft
 
         public void gravity(int[,] grid, Game game, List<Entity> Exists)
         {
+            int velocity = 0;
             foreach (Entity ent in Exists)
             {
 
@@ -125,6 +140,7 @@ namespace Minecraft
                 {
                     WriteAt("  ", cordinates.x * 2, cordinates.y);
                     cordinates.y++;
+                    cordinates.x += velocity;
                 }
             }
 
@@ -221,7 +237,7 @@ namespace Minecraft
     }
     class Entity(string name, int health, string type)
     {
-
+        public int velocity = 0;
         public string Name = name;
         public int Health = health;
         public string Type = type;
@@ -248,6 +264,8 @@ namespace Minecraft
 
         public void gravity(int[,] grid, bool time)
         {
+            
+
             //WriteAt("  ", cordinates.x, cordinates.y);
             if (grid[cordinates.y + 1, cordinates.x] == 0 && time)
             {
@@ -255,11 +273,22 @@ namespace Minecraft
 
                 WriteAt("  ", cordinates.x * 2, cordinates.y);
 
-                
-                cordinates.y++;
-
+                if (grid[cordinates.y + 2, cordinates.x] == 0)
+                {
+                    cordinates.y += velocity + 1;
+                }
+                else
+                {
+                    cordinates.y += 1;
+                }
+                cordinates.x += velocity;
 
             }
+            else if(grid[cordinates.y + 1, cordinates.x] != 0)
+            {
+                velocity = 0;
+            }
+            
             Console.ForegroundColor = ConsoleColor.Red;
             //WriteAt("██", cordinates.x * 2, cordinates.y - 1);
             WriteAt("██", cordinates.x * 2, cordinates.y);
