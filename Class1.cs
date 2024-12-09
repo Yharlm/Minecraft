@@ -236,7 +236,7 @@ namespace Minecraft
         }
 
     }
-    class Entity(string name, int health, string type,string sprite)
+    class Entity(string name, int health, string type, string sprite)
     {
         public int velocity = 0;
         public string Name = name;
