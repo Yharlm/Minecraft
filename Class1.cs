@@ -46,7 +46,8 @@ namespace Minecraft
     }
     class Projectile : Entity
     {
-        public Projectile(string name, int health, string type) : base(name, health, type)
+        public string sprite;
+        public Projectile(string name, int health, string type, string sprite) : base(name, health, type, sprite)
         {
 
         }
@@ -235,7 +236,7 @@ namespace Minecraft
         }
 
     }
-    class Entity(string name, int health, string type)
+    class Entity(string name, int health, string type,string sprite)
     {
         public int velocity = 0;
         public string Name = name;
@@ -244,7 +245,7 @@ namespace Minecraft
         public List<Behaviour> mob_ais = new List<Behaviour>();
         protected static int origRow;
         protected static int origCol;
-
+        public string Sprite = sprite;
         protected static void WriteAt(string s, int x, int y)
         {
             try
@@ -264,7 +265,7 @@ namespace Minecraft
 
         public void gravity(int[,] grid, bool time)
         {
-            
+
 
             //WriteAt("  ", cordinates.x, cordinates.y);
             if (grid[cordinates.y + 1, cordinates.x] == 0 && time)
@@ -284,14 +285,14 @@ namespace Minecraft
                 cordinates.x += velocity;
 
             }
-            else if(grid[cordinates.y + 1, cordinates.x] != 0)
+            else if (grid[cordinates.y + 1, cordinates.x] != 0)
             {
                 velocity = 0;
             }
-            
+
             Console.ForegroundColor = ConsoleColor.Red;
             //WriteAt("██", cordinates.x * 2, cordinates.y - 1);
-            WriteAt("██", cordinates.x * 2, cordinates.y);
+            WriteAt(sprite, cordinates.x * 2, cordinates.y);
             Console.ForegroundColor = default;
         }
 
