@@ -1,4 +1,5 @@
 //using ConsoleNewMinigame;
+using System;
 using System.Net.Security;
 using System.Xml.XPath;
 
@@ -22,12 +23,12 @@ namespace Minecraft
                             //catch { }
                             if (mob.Health <= 0) { Kill_entity(game, mob); }
                             Walk_to_player(mob, player, grid, game);
-                            if(GetRadius_forplayer(player,mob.cordinates,2) && game.curent_tick)
+                            if (GetRadius_forplayer(player, mob.cordinates, 2,2) && game.curent_tick)
                             {
                                 Explosion(game, grid, mob.cordinates, player);
                             }
                             break;
-                            
+
 
                     }
                 }
@@ -133,12 +134,12 @@ namespace Minecraft
 
 
 
-                Entity Mob = new Entity(null, 0, null,"EE"); overworld.Entity_list.Add(Mob);
+                Entity Mob = new Entity(null, 0, null, "EE"); overworld.Entity_list.Add(Mob);
 
-                Mob = new Entity("pig", 10, "Pig", "██");   overworld.Entity_list.Add(Mob);
-                
-                
-                Mob = new Entity("TNT", 0, null, "██");  overworld.Entity_list.Add(Mob); 
+                Mob = new Entity("pig", 10, "Pig", "██"); overworld.Entity_list.Add(Mob);
+
+
+                Mob = new Entity("TNT", 0, null, "██"); overworld.Entity_list.Add(Mob);
 
                 //Entity pig = new Entity("pig", 10, null); Mob pig.gravity(grid);
 
@@ -386,10 +387,10 @@ namespace Minecraft
             int flatness = random.Next(3, 17)
             ;
 
-            int min = 27
+            int min = 17
             ; int max = min + 3
             ; int Height_min = 4
-            ;
+            ;int underground_level = 30;
             int num = 0;
             int curf = 0;
             for (int j = 0; j < 100;)
@@ -407,16 +408,28 @@ namespace Minecraft
                         Fill_block(j, num + counter, grid, player.GetBlock("Dirt"));
                         counter++;
                     }
-                    while (counter < 15)
+                    while (counter < underground_level)
                     {
                         Fill_block(j, num + counter, grid, player.GetBlock("Stone"));
                         counter++;
                     }
+                    
                     j++;
-
                 }
 
+                
+            }
+            for (int j = 0; j < 100;)
+            {
+                int coalN = random.Next(14,24);
+                int vein = random.Next(1,6);
+                
+                if (random.Next(1, 30) < 4)
+                {
+                    Fill_Index_Cord2(j,num+ coalN-vein, j+vein,num+ coalN, grid, player.Block_list[7], 5);
 
+                }
+                j++;
             }
         }
 
@@ -493,13 +506,14 @@ namespace Minecraft
 
             return res;
         }
-        static bool GetRadius_forplayer(Cordinates object1, Cordinates object2, int distance)
+        static bool GetRadius_forplayer(Cordinates object1, Cordinates object2, int x,int y)
         {
             bool res = false;
-            if (object1.x > object2.x - distance && object1.x < object2.x + distance)
+            if (object1.x > object2.x - x && object1.x < object2.x + x && object1.y > object2.y - y && object1.y < object2.y + y)
             {
                 res = true;
             }
+            
 
             return res;
         }
@@ -569,8 +583,8 @@ namespace Minecraft
             //player.Selected_block = dirt;
             switch (player.Input)
             {
-                
-                    
+
+
                 case "R":
                     Attack(game, player, grid, 4, 5, 2);
                     Slash(player, game, grid);
@@ -585,7 +599,7 @@ namespace Minecraft
                         foreach (Entity entity in game.Existing_Entities)
                         {
 
-                            
+
                             WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
                             Cordinates cordinates = entity.cordinates;
                             game.Existing_Entities.Remove(entity);
@@ -625,10 +639,10 @@ namespace Minecraft
                         Console.ForegroundColor = default;
 
                         Entity mob = game.Entity_list[1];
-                        Entity Default = new Entity(mob.Name, mob.Health, mob.Type,mob.Sprite);
+                        Entity Default = new Entity(mob.Name, mob.Health, mob.Type, mob.Sprite);
                         //Default.cordinates.x = random.Next(4, 55);
                         Default.cordinates.x = player.x
-                        ; Default.cordinates.y = player.y - 3;
+                        ; Default.cordinates.y = player.y - 10;
 
 
 
@@ -655,7 +669,7 @@ namespace Minecraft
 
                     break;
                 case "K":
-                    if (Attack(game, player, grid, 1, 2, 2) == false)
+                    
                     {
 
                         if (player.special_key == "Spacebar")
@@ -981,7 +995,7 @@ namespace Minecraft
 
 
             Solid air = new Solid("air", 0, "  ", ConsoleColor.White, ConsoleColor.Cyan);
-            
+
 
             int range = 4;
             int range_max = 9;
@@ -998,8 +1012,8 @@ namespace Minecraft
             Fill_Index_Cord2(x - range_max, y - range_max - range, x + range_max + 1, y + range_max + 1 - range, grid, air, 2);
             //Refresh_area_not(game, player, grid, cordinates, pos);
 
-            if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range_max)) { player.health -= 50; }
-            if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range)) { player.health -= 50; }
+            if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range_max, range_max)) { player.health -= 50; }
+            if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range,range)) { player.health -= 50; }
 
         }
 
@@ -1195,9 +1209,9 @@ namespace Minecraft
             int x = cordinates.x;
             for (int i = 0; i < y; i++)
             {
-                for(int j = 0; j < x; j++)
+                for (int j = 0; j < x; j++)
                 {
-                    WriteAt("██", (cordinates.x1+j) * 2, cordinates.y1 + i);
+                    WriteAt("██", (cordinates.x1 + j) * 2, cordinates.y1 + i);
                 }
             }
 
