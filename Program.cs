@@ -1,3 +1,4 @@
+
 //using ConsoleNewMinigame;
 using System;
 using System.Net.Security;
@@ -22,11 +23,22 @@ namespace Minecraft
                             //try { Walk_to_player(mob, player, grid, game); }
                             //catch { }
                             if (mob.Health <= 0) { Kill_entity(game, mob); }
+                            if (grid[mob.cordinates.y, mob.cordinates.x + 1] != 0 || grid[mob.cordinates.y, mob.cordinates.x - 1] != 0)
+                            {
+                                if (grid[mob.cordinates.y + 1, mob.cordinates.x] != 0)
+                                {
+                                    WriteAt("  ", mob.cordinates.x * 2, mob.cordinates.y);
+                                    mob.cordinates.y -= 2;
+                                }
+
+                            }
                             Walk_to_player(mob, player, grid, game);
-                            if (GetRadius_forplayer(player, mob.cordinates, 2,2) && game.curent_tick)
+
+                            if (GetRadius_forplayer(player, mob.cordinates, 2, 2) && game.curent_tick)
                             {
                                 Explosion(game, grid, mob.cordinates, player);
                             }
+                            
                             break;
 
 
@@ -390,7 +402,7 @@ namespace Minecraft
             int min = 17
             ; int max = min + 3
             ; int Height_min = 4
-            ;int underground_level = 30;
+            ; int underground_level = 30;
             int num = 0;
             int curf = 0;
             for (int j = 0; j < 100;)
@@ -413,20 +425,20 @@ namespace Minecraft
                         Fill_block(j, num + counter, grid, player.GetBlock("Stone"));
                         counter++;
                     }
-                    
+
                     j++;
                 }
 
-                
+
             }
             for (int j = 0; j < 100;)
             {
-                int coalN = random.Next(14,24);
-                int vein = random.Next(1,6);
-                
+                int coalN = random.Next(14, 24);
+                int vein = random.Next(1, 6);
+
                 if (random.Next(1, 30) < 4)
                 {
-                    Fill_Index_Cord2(j,num+ coalN-vein, j+vein,num+ coalN, grid, player.Block_list[7], 5);
+                    Fill_Index_Cord2(j, num + coalN - vein, j + vein, num + coalN, grid, player.Block_list[7], 5);
 
                 }
                 j++;
@@ -495,25 +507,22 @@ namespace Minecraft
         static bool GetRadius(Entity mob1, Player plr, int x, int y)
         {
             bool res = false;
-            if (mob1.cordinates.x > plr.x - x && mob1.cordinates.x < plr.x + x)
+            if (mob1.cordinates.x > plr.x + x && mob1.cordinates.x < plr.x - x && mob1.cordinates.y > plr.y + y && mob1.cordinates.y < plr.y - y)
             {
                 res = true;
             }
-            if (mob1.cordinates.y > plr.y - y && mob1.cordinates.y < plr.y + y)
-            {
-                res = true;
-            }
+            
 
             return res;
         }
-        static bool GetRadius_forplayer(Cordinates object1, Cordinates object2, int x,int y)
+        static bool GetRadius_forplayer(Cordinates object1, Cordinates object2, int x, int y)
         {
             bool res = false;
             if (object1.x > object2.x - x && object1.x < object2.x + x && object1.y > object2.y - y && object1.y < object2.y + y)
             {
                 res = true;
             }
-            
+
 
             return res;
         }
@@ -669,7 +678,7 @@ namespace Minecraft
 
                     break;
                 case "K":
-                    
+
                     {
 
                         if (player.special_key == "Spacebar")
@@ -1013,7 +1022,7 @@ namespace Minecraft
             //Refresh_area_not(game, player, grid, cordinates, pos);
 
             if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range_max, range_max)) { player.health -= 50; }
-            if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range,range)) { player.health -= 50; }
+            if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range, range)) { player.health -= 50; }
 
         }
 
@@ -1216,6 +1225,8 @@ namespace Minecraft
             }
 
         }
+
+        
 
     }
 
