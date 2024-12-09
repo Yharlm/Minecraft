@@ -1,5 +1,6 @@
 //using ConsoleNewMinigame;
 using System.Net.Security;
+using System.Xml.XPath;
 
 namespace Minecraft
 {
@@ -20,7 +21,13 @@ namespace Minecraft
                             //try { Walk_to_player(mob, player, grid, game); }
                             //catch { }
                             if (mob.Health <= 0) { Kill_entity(game, mob); }
+                            Walk_to_player(mob, player, grid, game);
+                            if(GetRadius_forplayer(player,mob.cordinates,2) && game.curent_tick)
+                            {
+                                Explosion(game, grid, mob.cordinates, player);
+                            }
                             break;
+                            
 
                     }
                 }
@@ -89,7 +96,7 @@ namespace Minecraft
 
 
                 //Sprite magicMissile = new Sprite();
-                
+
                 //magicMissile.Sprites[0, 0] = "▀ ▄       "; 
                 //magicMissile.Sprites[0, 1] = "  ▀ ▄     ";
                 //magicMissile.Sprites[0, 2] = "    █▄    ";
@@ -126,10 +133,13 @@ namespace Minecraft
 
 
 
-                Entity Mob = new Entity(null, 0, null); overworld.Entity_list.Add(Mob);
+                Entity Mob = new Entity(null, 0, null,"EE"); overworld.Entity_list.Add(Mob);
 
-                Mob = new Entity("pig", 10, "Pig"); overworld.Entity_list.Add(Mob);
-                Mob = new Entity("TNT", 0, null); overworld.Entity_list.Add(Mob);
+                Mob = new Entity("pig", 10, "Pig", "██");   overworld.Entity_list.Add(Mob);
+                
+                
+                Mob = new Entity("TNT", 0, null, "██");  overworld.Entity_list.Add(Mob); 
+
                 //Entity pig = new Entity("pig", 10, null); Mob pig.gravity(grid);
 
 
@@ -559,7 +569,8 @@ namespace Minecraft
             //player.Selected_block = dirt;
             switch (player.Input)
             {
-
+                
+                    
                 case "R":
                     Attack(game, player, grid, 4, 5, 2);
                     Slash(player, game, grid);
@@ -574,9 +585,11 @@ namespace Minecraft
                         foreach (Entity entity in game.Existing_Entities)
                         {
 
-                            Explosion(game, grid, entity.cordinates, player);
+                            
                             WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
+                            Cordinates cordinates = entity.cordinates;
                             game.Existing_Entities.Remove(entity);
+                            Explosion(game, grid, cordinates, player);
 
                         }
                     }
@@ -612,7 +625,7 @@ namespace Minecraft
                         Console.ForegroundColor = default;
 
                         Entity mob = game.Entity_list[1];
-                        Entity Default = new Entity(mob.Name, mob.Health, mob.Type);
+                        Entity Default = new Entity(mob.Name, mob.Health, mob.Type,mob.Sprite);
                         //Default.cordinates.x = random.Next(4, 55);
                         Default.cordinates.x = player.x
                         ; Default.cordinates.y = player.y - 3;
@@ -626,9 +639,16 @@ namespace Minecraft
                     }
                 case "E":
                     player.hotbar++;
+                    Console.BackgroundColor = ConsoleColor.White;
                     Console.ForegroundColor = ConsoleColor.Red;
-
-                    player.Selected_block = player.Block_list[player.hotbar]; WriteAt(player.Selected_block.Name + "    ", 55, 2);
+                    Cordinates cords = new Cordinates();
+                    cords.x = 16;
+                    cords.y = 16;
+                    cords.x1 = 8;
+                    cords.y1 = 6;
+                    Refresh_area(game, player, grid, cords);
+                    player.Selected_block = player.Block_list[player.hotbar]; WriteAt(player.Selected_block.Name.ToString() + "   ", player.x * 2, player.y - 3);
+                    Console.BackgroundColor = ConsoleColor.Cyan;
                     Console.ForegroundColor = default;
                     if (player.hotbar == player.Block_list.Count - 1) player.hotbar = 0;
 
@@ -906,9 +926,9 @@ namespace Minecraft
                 foreach (Entity entity in game.Existing_Entities)
                 {
                     entity.gravity(grid, game.curent_tick);
-                    
-                        
-                    
+
+
+
                     //try { Walk_to_player(entity, player, grid, game); }
                     //catch { }
                 }
@@ -960,8 +980,8 @@ namespace Minecraft
         {
 
 
-            Solid air = new Solid("air", 0, "  ", ConsoleColor.White, ConsoleColor.White);
-            Solid air2 = new Solid("air", 0, "  ", ConsoleColor.White, ConsoleColor.Yellow);
+            Solid air = new Solid("air", 0, "  ", ConsoleColor.White, ConsoleColor.Cyan);
+            
 
             int range = 4;
             int range_max = 9;
@@ -975,8 +995,8 @@ namespace Minecraft
             cordinates.y1 = y + range_max + 1;
 
             Fill_Index_Cord2(x - range, y - range, x + range + 1, y + range + 1, grid, air, 30);
-            Fill_Index_Cord2(x - range_max, y - range_max - range, x + range_max + 1, y + range_max + 1 - range, grid, air2, 2);
-            Refresh_area_not(game, player, grid, cordinates, pos);
+            Fill_Index_Cord2(x - range_max, y - range_max - range, x + range_max + 1, y + range_max + 1 - range, grid, air, 2);
+            //Refresh_area_not(game, player, grid, cordinates, pos);
 
             if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range_max)) { player.health -= 50; }
             if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range)) { player.health -= 50; }
@@ -1140,40 +1160,47 @@ namespace Minecraft
                     Console.BackgroundColor = selected.BG;
                     Console.ForegroundColor = selected.FG;
                     WriteAt(selected.Texture, (j + x - cords.x1) * 2, i + y - cords.y1);
+                    //WriteAt("EE", (j + x - cords.x1) * 2, i + y - cords.y1);
                     Console.BackgroundColor = ConsoleColor.Cyan;
                     Console.ForegroundColor = default;
                 }
             }
         }
 
-        static void Refresh_area_not(Game game, Player player, int[,] grid, Cordinates cords,Cordinates pos)
+        static void Refresh_area_not(Game game, Player player, int[,] grid, Cordinates cords, Cordinates pos)
         {
-            int x = pos.x;
-            int y = pos.y;
-            int[,] local = new int[cords.y, cords.x];
-            for (int i = 0; i < local.GetLength(0); i++)
+            int y = cords.y;
+            int x = cords.x;
+            for (int i = 0; i < y; i++)
             {
-                for (int j = 0; j < local.GetLength(1); j++)
+                for (int j = 0; j < x; j++)
                 {
                     int Id = grid[i + y - cords.y1, j + x - cords.x1];
                     var selected = player.Block_list.Find(x => x.id == Id);
 
                     Console.BackgroundColor = selected.BG;
                     Console.ForegroundColor = selected.FG;
-                    WriteAt(selected.Texture, (j + x - cords.x1) * 2, i + y - cords.y1);
+                    WriteAt("██", (cords.x1 + j) * 2, cords.y1 + i);
+                    //WriteAt("EE", (j + x - cords.x1) * 2, i + y - cords.y1);
                     Console.BackgroundColor = ConsoleColor.Cyan;
                     Console.ForegroundColor = default;
                 }
             }
         }
 
-        static void Magic_Missile(Game game, Player player, int[,] grid)
+
+        static void Print_window(Cordinates cordinates)
         {
-            Cordinates cordinates = new Cordinates();
-            int x = player.x;
-            int y = player.y;
-            
-            WriteAt("▀█▄", x, y + 0);
+            int y = cordinates.y;
+            int x = cordinates.x;
+            for (int i = 0; i < y; i++)
+            {
+                for(int j = 0; j < x; j++)
+                {
+                    WriteAt("██", (cordinates.x1+j) * 2, cordinates.y1 + i);
+                }
+            }
+
         }
 
     }
