@@ -1,14 +1,3 @@
-
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Numerics;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Minecraft
 {
 
@@ -16,6 +5,7 @@ namespace Minecraft
 
     {
 
+        public Cordinates last_popup;
         public int health = 100;
         public Entity held = null;
         public bool Holding = false;
@@ -159,6 +149,17 @@ namespace Minecraft
 
 
     }
+
+    class Recipe
+    {
+        public List<Solid> Recipes;
+        public void Craft(Game game)
+        {
+            
+        }
+
+
+    }
     class Solid(string name, int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
         public int quantity = 0;
@@ -277,17 +278,19 @@ namespace Minecraft
 
                 if (grid[cordinates.y + 2, cordinates.x] == 0)
                 {
-                    cordinates.y= + 1;
+                    cordinates.y += velocity + 1;
                 }
                 else
                 {
-                    
+                    cordinates.y += 1;
                 }
-                cordinates.y += 1;
                 cordinates.x += velocity;
+
+            }
+            else if (grid[cordinates.y + 1, cordinates.x] != 0)
+            {
                 velocity = 0;
             }
-            
 
             Console.ForegroundColor = ConsoleColor.Red;
             //WriteAt("██", cordinates.x * 2, cordinates.y - 1);
