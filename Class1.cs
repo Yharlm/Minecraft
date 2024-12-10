@@ -149,11 +149,16 @@ namespace Minecraft
 
 
     }
-
+    class Non_Existent(int id, string name, int amount)
+    {
+        public int Id = id;
+        public string Name = name;
+        public int Amount = amount;
+    }
     class Recipe
     {
         public Solid item;
-        public List<Solid> required = new List<Solid>();
+        public List<Non_Existent> required = new List<Non_Existent>();
 
 
 
@@ -238,6 +243,7 @@ namespace Minecraft
     }
     class Entity(string name, int health, string type, string sprite)
     {
+        
         public int velocity = 0;
         public string Name = name;
         public int Health = health;
@@ -262,7 +268,7 @@ namespace Minecraft
         public bool grounded = true;
 
         public Cordinates cordinates = new Cordinates();
-
+        public ConsoleColor Color;
         public void gravity(int[,] grid, bool time)
         {
 
@@ -276,7 +282,7 @@ namespace Minecraft
 
                 if (grid[cordinates.y + 2, cordinates.x] == 0)
                 {
-                    cordinates.y += velocity + 1;
+                    cordinates.y += Math.Abs( velocity )+ 1;
                 }
                 else
                 {
@@ -290,11 +296,12 @@ namespace Minecraft
                 velocity = 0;
             }
 
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = Color;
             //WriteAt("██", cordinates.x * 2, cordinates.y - 1);
             WriteAt(sprite, cordinates.x * 2, cordinates.y);
-            Console.ForegroundColor = default;
+            Console.ForegroundColor =default;
         }
+
 
 
     }
