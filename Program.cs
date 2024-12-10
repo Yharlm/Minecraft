@@ -71,7 +71,7 @@ namespace Minecraft
         static void Main(string[] args)
         {
             //Console_runE();
-
+            
 
             while (true)
             {
@@ -106,26 +106,8 @@ namespace Minecraft
                 Default = new Solid("Crafting_table", 10, "TT", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
 
 
-                //Sprite magicMissile = new Sprite();
-
-                //magicMissile.Sprites[0, 0] = "▀ ▄       "; 
-                //magicMissile.Sprites[0, 1] = "  ▀ ▄     ";
-                //magicMissile.Sprites[0, 2] = "    █▄    ";
-                //magicMissile.Sprites[0, 3] = "    ▀     ";
-                //magicMissile.Sprites[0, 4] = "          ";
-
-                //string[,] Sprites =
-                //    {
-                //{
-                //    "▀ ▄       ",
-                //    "  ▀ ▄     ",
-                //    "    █▄    ",
-                //    "    ▀     ",
-                //    "          "
-                //}
-                //    };
-
-
+                Recipe recipe = new Recipe();
+                recipe.item = player.GetBlock("Crafting_table"); recipe.required.Add(player.GetBlock("Log")); recipe.required[0].quantity = 1; player.Recipes.Add(recipe);
 
 
 
@@ -1249,6 +1231,18 @@ namespace Minecraft
                 Console.ForegroundColor = default;
                 Console.BackgroundColor = ConsoleColor.Cyan;
             }
+
+        }
+        static void Craft(Player player,Recipe name)
+        {
+            foreach (var item in name.required)
+            {
+                if(player.Block_list.Contains(item) && player.Block_list.Eq
+                {
+
+                }
+            }
+
             
         }
 
