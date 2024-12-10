@@ -4,7 +4,7 @@ namespace Minecraft
     class Player : Cordinates
 
     {
-
+        public List<Recipe> Recipes;
         public Cordinates last_popup;
         public int health = 100;
         public Entity held = null;
@@ -150,13 +150,11 @@ namespace Minecraft
 
     }
 
-    class Recipe
+    class Recipe 
     {
-        public List<Solid> Recipes;
-        public void Craft(Game game)
-        {
-            
-        }
+        public Solid item;
+        public List<Solid> required;
+        
 
 
     }
