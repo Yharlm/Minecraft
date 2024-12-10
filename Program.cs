@@ -71,7 +71,7 @@ namespace Minecraft
         static void Main(string[] args)
         {
             //Console_runE();
-            
+
 
             while (true)
             {
@@ -107,8 +107,12 @@ namespace Minecraft
 
 
                 Recipe recipe = new Recipe();
-                recipe.item = player.GetBlock("Crafting_table"); recipe.required.Add(player.GetBlock("Log")); recipe.required[0].quantity = 1; player.Recipes.Add(recipe);
+                recipe.item = player.Block_list[9]; recipe.required.Add(player.GetBlock("Log")); recipe.required[0].quantity = 1; player.Recipes.Add(recipe);
 
+                foreach(var item in player.Block_list)
+                {
+                    item.quantity = 0;
+                }
 
 
 
@@ -609,10 +613,11 @@ namespace Minecraft
 
                     break;
                 case "Q":
-                    
 
                     
-                    
+                    Craft(player, player.Recipes[0]);
+
+
 
                     break;
                 case "Y":
@@ -650,10 +655,10 @@ namespace Minecraft
 
                     Console.ForegroundColor = ConsoleColor.Red;
                     Print_window(player);
-                    
-                    
+
+
                     if (player.hotbar == player.Block_list.Count - 1) player.hotbar = 0;
-                    
+
 
                     break;
                 case "K":
@@ -697,7 +702,7 @@ namespace Minecraft
                         }
                         else if (player.last_key == "S")
                         {
-                            Break_block(player.x, player.y + 1, grid, air,player);
+                            Break_block(player.x, player.y + 1, grid, air, player);
                         }
                     }
 
@@ -924,12 +929,12 @@ namespace Minecraft
             Console.BackgroundColor = ConsoleColor.Cyan;
         }
 
-        static void Break_block(int x, int y, int[,] grid, Solid Block,Player player)
+        static void Break_block(int x, int y, int[,] grid, Solid Block, Player player)
         {
 
             Console.ForegroundColor = Block.FG;
             Console.BackgroundColor = Block.BG;
-            player.Block_list.Find(i => i.id == grid[y, x]).quantity++ ;
+            player.Block_list.Find(i => i.id == grid[y, x]).quantity++;
             grid[y, x] = Block.id;
             WriteAt(Block.Texture, x * 2, y);
             Console.ForegroundColor = default;
@@ -1025,7 +1030,7 @@ namespace Minecraft
         {
 
             int speed = 1;
-            
+
             if (player.x < entity.cordinates.x)
             {
 
@@ -1035,7 +1040,7 @@ namespace Minecraft
                     entity.cordinates.x--;
                 }
 
-                
+
 
             }
             else if (player.x > entity.cordinates.x)
@@ -1048,7 +1053,7 @@ namespace Minecraft
                 }
 
             }
-            
+
 
         }
 
@@ -1214,7 +1219,7 @@ namespace Minecraft
         {
             int index = 0;
             Console.ForegroundColor = ConsoleColor.Blue;
-            
+
             foreach (var item in player.Block_list)
             {
                 Console.BackgroundColor = ConsoleColor.White;
@@ -1224,7 +1229,7 @@ namespace Minecraft
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     WriteAt(item.Name + " " + item.quantity.ToString(), 3, 30 + index);
-                    WriteAt(">",2, 30 + index);
+                    WriteAt(">", 2, 30 + index);
                 }
 
                 index++;
@@ -1233,17 +1238,19 @@ namespace Minecraft
             }
 
         }
-        static void Craft(Player player,Recipe name)
+        static void Craft(Player player, Recipe name)
         {
+
             foreach (var item in name.required)
             {
-                if(player.Block_list.Contains(item) && player.Block_list.Eq
+                if (player.GetBlock(item.Name).quantity >= 1)
                 {
-
+                    player.GetBlock(name.item.Name).quantity++;
+                    player.GetBlock(item.Name).quantity-= item.quantity;
                 }
             }
 
-            
+
         }
 
     }
