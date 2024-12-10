@@ -37,7 +37,22 @@ namespace Minecraft
                                 }
                             }
                             break;
+                        case "Boss":
+                            if (mob.Health <= 0) { Kill_entity(game, mob); }
+                            Walk_to_player(mob, player, grid, game);
+                            if (grid[mob.cordinates.y + 1, mob.cordinates.x] != 0)
+                            {
+                                if (grid[mob.cordinates.y, mob.cordinates.x + 1] != 0 || grid[mob.cordinates.y, mob.cordinates.x - 1] != 0)
+                                {
 
+                                    WriteAt("  ", mob.cordinates.x * 2, mob.cordinates.y);
+                                    mob.cordinates.y -= 2;
+                                }
+                            }
+
+
+                            break;
+                        
 
                     }
                 }
@@ -70,7 +85,7 @@ namespace Minecraft
         }
         static void Main(string[] args)
         {
-            //Console_runE();
+            Console_runE();
 
 
             while (true)
@@ -107,11 +122,11 @@ namespace Minecraft
 
 
                 Recipe recipe = new Recipe();
-                recipe.item = player.Block_list[9]; recipe.required.Add(player.GetBlock("Log")); recipe.required[0].quantity = 1; player.Recipes.Add(recipe);
+                recipe.item = player.Block_list[9]; Non_Existent placehold = new Non_Existent(4, "Log", 1); recipe.required.Add(placehold); player.Recipes.Add(recipe);
 
-                foreach(var item in player.Block_list)
+                foreach (var item in player.Recipes)
                 {
-                    item.quantity = 0;
+                    item.item.quantity= 0;
                 }
 
 
@@ -133,9 +148,16 @@ namespace Minecraft
                 Entity Mob = new Entity(null, 0, null, "EE"); overworld.Entity_list.Add(Mob);
 
                 Mob = new Entity("pig", 10, "Pig", "██"); overworld.Entity_list.Add(Mob);
-
+                Mob.Color = ConsoleColor.Red;
 
                 Mob = new Entity("TNT", 0, null, "██"); overworld.Entity_list.Add(Mob);
+                Mob.Color = ConsoleColor.Red;
+                Mob = new Entity("Boss", 1000, "Boss", "██"); 
+                Mob.Color = ConsoleColor.DarkBlue; 
+                overworld.Entity_list.Add(Mob);
+
+
+                
 
                 //Entity pig = new Entity("pig", 10, null); Mob pig.gravity(grid);
 
@@ -207,7 +229,6 @@ namespace Minecraft
                     }
 
                 }
-
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Clear();
@@ -217,6 +238,7 @@ namespace Minecraft
                 Thread.Sleep(6000);
                 Console.BackgroundColor = ConsoleColor.Cyan;
                 Console.ForegroundColor = default;
+
 
             }
         }
@@ -268,33 +290,43 @@ namespace Minecraft
             //Environment.Exit(0);
 
             //Console.WriteLine(Console.ReadKey().Key.ToString());  █▀▄ 
-            Console.ForegroundColor = ConsoleColor.Red;
-            Thread.Sleep(10);
-            WriteAt("▀ ▄       ", 0, 0);
-            WriteAt("  ▀ ▄     ", 0, 1);
-            WriteAt("    █▄    ", 0, 2);
-            WriteAt("    ▀     ", 0, 3);
-            WriteAt("          ", 0, 4);
-            Thread.Sleep(40);
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            WriteAt("   ▄      ", 0, 0);
-            WriteAt("    ▀▄    ", 0, 1);
-            WriteAt("     █▄   ", 0, 2);
-            WriteAt("   ▄██▀   ", 0, 3);
-            WriteAt("▄██▀▀     ", 0, 4);
-            Thread.Sleep(50);
             Console.ForegroundColor = ConsoleColor.White;
-            WriteAt("          ", 0, 0);
-            WriteAt("     ▄    ", 0, 1);
-            WriteAt("      ▄   ", 0, 2);
-            WriteAt("     █▀   ", 0, 3);
-            WriteAt("▄ ▄█▀▀    ", 0, 4);
+            Thread.Sleep(10);
+            WriteAt("  ▄▄▀▀▀▀▀▄▄  ", 0, 0);
+            WriteAt(" █         █ ", 0, 1);
+            WriteAt("█           █", 0, 2);
+            WriteAt("█           █", 0, 3);
+            WriteAt(" █         █ ", 0, 4);
+            WriteAt("  ▀▀▄▄▄▄▄▀▀  ", 0, 5);
+            Thread.Sleep(40);
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            WriteAt("  ▄▄▀▀▀▀▀▄▄  ", 0, 0);
+            WriteAt(" █         █ ", 0, 1);
+            WriteAt("█           █", 0, 2);
+            WriteAt("█           █", 0, 3);
+            WriteAt(" █         █ ", 0, 4);
+            WriteAt("  ▀▀▄▄▄▄▄▀▀  ", 0, 5);
+            Thread.Sleep(50);
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            WriteAt("  ▄▄▀▀▀▀▀▄▄  ", 0, 0);
+            WriteAt(" █         █ ", 0, 1);
+            WriteAt("█           █", 0, 2);
+            WriteAt("█           █", 0, 3);
+            WriteAt(" █         █ ", 0, 4);
+            WriteAt("  ▀▀▄▄▄▄▄▀▀  ", 0, 5);
             Thread.Sleep(100);
-            WriteAt("          ", 0, 0);
-            WriteAt("          ", 0, 1);
-            WriteAt("          ", 0, 2);
-            WriteAt("          ", 0, 3);
-            WriteAt("          ", 0, 4);
+            WriteAt("  ▄▄▀▀▀▀▀▄▄  ", 0, 0);
+            WriteAt(" █         █ ", 0, 1);
+            WriteAt("█           █", 0, 2);
+            WriteAt("█           █", 0, 3);
+            WriteAt(" █         █ ", 0, 4);
+            WriteAt("  ▀▀▄▄▄▄▄▀▀  ", 0, 5);
+            //WriteAt("          ", x, y + 0);
+            //WriteAt("    ▄     ", x, y + 1);
+            //WriteAt("   ▄      ", x, y + 2);
+            //WriteAt("   ▀█     ", x, y + 3);
+            //WriteAt("    ▀▀█▄ ▄", x, y + 4);
+            Thread.Sleep(10);
             Console.ReadLine();
             Console.ForegroundColor = default;
 
@@ -614,7 +646,7 @@ namespace Minecraft
                     break;
                 case "Q":
 
-                    
+
                     Craft(player, player.Recipes[0]);
 
 
@@ -636,8 +668,9 @@ namespace Minecraft
                         WriteAt(game.Existing_Entities.Count().ToString(), 24, 3);
                         Console.ForegroundColor = default;
 
-                        Entity mob = game.Entity_list[1];
+                        Entity mob = game.Entity_list[3];
                         Entity Default = new Entity(mob.Name, mob.Health, mob.Type, mob.Sprite);
+                        Default.Color = mob.Color;
                         //Default.cordinates.x = random.Next(4, 55);
                         Default.cordinates.x = player.x
                         ; Default.cordinates.y = player.y - 10;
@@ -1171,6 +1204,8 @@ namespace Minecraft
 
         }
 
+        
+
         static void Refresh_area(Game game, Player player, int[,] grid, Cordinates cords)
         {
             int x = player.x;
@@ -1241,16 +1276,26 @@ namespace Minecraft
         static void Craft(Player player, Recipe name)
         {
 
-            foreach (var item in name.required)
+            foreach (var Item in name.required)
             {
-                if (player.GetBlock(item.Name).quantity >= 1)
+                if (player.GetBlock(Item.Name).quantity >= Item.Amount)
                 {
                     player.GetBlock(name.item.Name).quantity++;
-                    player.GetBlock(item.Name).quantity-= item.quantity;
+                    player.GetBlock(Item.Name).quantity -= Item.Amount;
                 }
             }
+        }
 
-
+        static void Jugmen_cut(Cordinates pos, Game game, Player player, int[] grid)
+        {
+            int x = pos.x;
+            int y = pos.y;
+            WriteAt("          ", x, y + 0);
+            WriteAt("    ▄     ", x, y + 1);
+            WriteAt("   ▄      ", x, y + 2);
+            WriteAt("   ▀█     ", x, y + 3);
+            WriteAt("    ▀▀█▄ ▄", x, y + 4);
+            Thread.Sleep(10);
         }
 
     }
