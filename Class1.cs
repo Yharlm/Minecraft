@@ -161,6 +161,7 @@ namespace Minecraft
     }
     class Solid(string name, int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
+        public int quantity = 0;
         public string Name = name;
         public int id = Id;
         public string Texture = texture;
@@ -276,19 +277,17 @@ namespace Minecraft
 
                 if (grid[cordinates.y + 2, cordinates.x] == 0)
                 {
-                    cordinates.y += velocity + 1;
+                    cordinates.y= + 1;
                 }
                 else
                 {
-                    cordinates.y += 1;
+                    
                 }
+                cordinates.y += 1;
                 cordinates.x += velocity;
-
-            }
-            else if (grid[cordinates.y + 1, cordinates.x] != 0)
-            {
                 velocity = 0;
             }
+            
 
             Console.ForegroundColor = ConsoleColor.Red;
             //WriteAt("██", cordinates.x * 2, cordinates.y - 1);
