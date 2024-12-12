@@ -45,6 +45,10 @@ namespace Minecraft
                                     mob.cordinates.y -= 2;
                                 }
                             }
+                            if (GetRadius_forplayer(player, mob.cordinates, 2, 2) && game.curent_tick)
+                            {
+                                player.health -= 10;
+                            }
 
 
                             break;
@@ -117,9 +121,15 @@ namespace Minecraft
                 Default = new Solid("Crafting_table", 10, "TT", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
                 Default = new Solid("Wooden_planks", 11, "▄▄", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
                 Default = new Solid("water", 12, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
+
+                //Recipe recipe = new Recipe();
+                //Non_Existent placehold = new Non_Existent(4, "Log", 1);
+                //recipe = new Recipe(); recipe.item = player.GetBlock("Crafting_table"); placehold = new Non_Existent(4, "Log", 1); recipe.required.Add(placehold); player.Recipes.Add(recipe);
+                //recipe = new Recipe(); recipe.item = player.GetBlock("Wooden_planks"); placehold = new Non_Existent(4, "Log", 1); recipe.num = 4; recipe.required.Add(placehold); player.Recipes.Add(recipe);
+
                 Recipe recipe = new Recipe();
-                recipe.item = player.Block_list[9]; Non_Existent placehold = new Non_Existent(4, "Log", 1); recipe.required.Add(placehold); player.Recipes.Add(recipe);
-                recipe.item = player.GetBlock("Wooden_planks"); placehold = new Non_Existent(4, "Log", 1); recipe.num = 4; recipe.required.Add(placehold); player.Recipes.Add(recipe);
+                Non_Existent placehold = new Non_Existent(4, "Log", 1);
+                //recipe = new Recipe(); recipe.item = player.GetBlock("Crafting_table"); placehold = new Non_Existent(4, "Log", 1); recipe.required.Add(placehold); player.Recipes.Add(recipe);
 
                 foreach (var item in player.Recipes)
                 {
@@ -152,6 +162,7 @@ namespace Minecraft
                 Mob = new Entity("Boss", 1000, "Boss", "██");
                 Mob.Color = ConsoleColor.DarkBlue;
                 overworld.Entity_list.Add(Mob);
+                Projectile projectile = new Projectile("bullet", 10);
 
 
 
@@ -614,7 +625,9 @@ namespace Minecraft
             //player.Selected_block = dirt;
             switch (player.Input)
             {
-
+                case "P":
+                    //Shoot_Projectile(player,game,)
+                    break;
 
                 case "R":
                     Attack(game, player, grid, 4, 5, 2);
@@ -644,7 +657,8 @@ namespace Minecraft
                 case "Q":
 
 
-                    Craft(player, player.Recipes.Find(i => i.item.Name == player.Selected_block.Name));
+                    Craft(player, player.Recipes[0]);
+                    
 
                     Print_window(player);
 
@@ -662,10 +676,9 @@ namespace Minecraft
                     break;
                 case "T":
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
+                        
                         WriteAt(game.Existing_Entities.Count().ToString(), 24, 3);
-                        Console.ForegroundColor = default;
-
+                        
                         Entity mob = game.Entity_list[3];
                         Entity Default = new Entity(mob.Name, mob.Health, mob.Type, mob.Sprite);
                         Default.Color = mob.Color;
@@ -682,6 +695,11 @@ namespace Minecraft
                     }
                 case "E":
                     player.hotbar++;
+                    player.Crafting_select++;
+                    if(player.Crafting_select == player.Recipes.Count)
+                    {
+                        player.Crafting_select = 0;
+                    }
                     player.Selected_block = player.Block_list[player.hotbar];
 
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -1269,6 +1287,8 @@ namespace Minecraft
                 Console.ForegroundColor = default;
                 Console.BackgroundColor = ConsoleColor.Cyan;
             }
+            WriteAt(player.Crafting_select.ToString(), 2, 30 + index);
+
 
         }
         static void Craft(Player player, Recipe name)
@@ -1282,6 +1302,22 @@ namespace Minecraft
                     player.GetBlock(Item.Name).quantity -= Item.Amount;
                 }
             }
+        }
+
+        static void Shoot_Projectile(Player player,Game game, Entity entity)
+        {
+            WriteAt(game.Existing_Entities.Count().ToString(), 24, 3);
+
+            Entity mob = game.Entity_list[3];
+            Entity Default = new Entity(mob.Name, mob.Health, mob.Type, mob.Sprite);
+            Default.Color = mob.Color;
+            //Default.cordinates.x = random.Next(4, 55);
+            Default.cordinates.x = player.x
+            ; Default.cordinates.y = player.y - 10;
+
+
+
+            game.Existing_Entities.Add(Default);
         }
 
 
