@@ -158,6 +158,7 @@ namespace Minecraft
     class Recipe
     {
         public Solid item;
+        public int num;
         public List<Non_Existent> required = new List<Non_Existent>();
 
 
@@ -165,6 +166,7 @@ namespace Minecraft
     }
     class Solid(string name, int Id, string texture, ConsoleColor fG, ConsoleColor bG)
     {
+        public bool solid = true;
         public int quantity = 0;
         public string Name = name;
         public int id = Id;
@@ -243,7 +245,7 @@ namespace Minecraft
     }
     class Entity(string name, int health, string type, string sprite)
     {
-        
+
         public int velocity = 0;
         public string Name = name;
         public int Health = health;
@@ -282,7 +284,7 @@ namespace Minecraft
 
                 if (grid[cordinates.y + 2, cordinates.x] == 0)
                 {
-                    cordinates.y += Math.Abs( velocity )+ 1;
+                    cordinates.y += Math.Abs(velocity) + 1;
                 }
                 else
                 {
@@ -299,7 +301,7 @@ namespace Minecraft
             Console.ForegroundColor = Color;
             //WriteAt("██", cordinates.x * 2, cordinates.y - 1);
             WriteAt(sprite, cordinates.x * 2, cordinates.y);
-            Console.ForegroundColor =default;
+            Console.ForegroundColor = default;
         }
 
 
