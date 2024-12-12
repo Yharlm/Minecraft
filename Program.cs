@@ -1,8 +1,4 @@
 //using ConsoleNewMinigame;
-using System;
-using System.Net.Security;
-using System.Xml.XPath;
-
 namespace Minecraft
 {
     class Program
@@ -52,7 +48,7 @@ namespace Minecraft
 
 
                             break;
-                        
+
 
                     }
                 }
@@ -110,8 +106,8 @@ namespace Minecraft
                 Default = new Solid("Dirt", 2, "██", ConsoleColor.DarkYellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
                 Default = new Solid("Stone", 3, "██", ConsoleColor.DarkGray, ConsoleColor.DarkGray); player.Block_list.Add(Default);
                 Default = new Solid("Log", 4, "||", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
-                Background = new Non_solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_Back_list.Add(Background);
-                Default = new Solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_Back_list.Add(Background);
+
+                Default = new Solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
                 //Default = new Solid("water", 5, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
 
                 Default = new Solid("waterTop", 6, "▄▄", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
@@ -119,14 +115,15 @@ namespace Minecraft
                 Default = new Solid("Coal_ore", 8, "▄▀", ConsoleColor.DarkGray, ConsoleColor.Black); player.Block_list.Add(Default);
                 Default = new Solid("Iron_ore", 9, "▄▀", ConsoleColor.DarkGray, ConsoleColor.Magenta); player.Block_list.Add(Default);
                 Default = new Solid("Crafting_table", 10, "TT", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
-
-
+                Default = new Solid("Wooden_planks", 11, "▄▄", ConsoleColor.Yellow, ConsoleColor.DarkYellow); player.Block_list.Add(Default);
+                Default = new Solid("water", 12, "  ", ConsoleColor.DarkBlue, ConsoleColor.DarkBlue); player.Block_list.Add(Default);
                 Recipe recipe = new Recipe();
                 recipe.item = player.Block_list[9]; Non_Existent placehold = new Non_Existent(4, "Log", 1); recipe.required.Add(placehold); player.Recipes.Add(recipe);
+                recipe.item = player.GetBlock("Wooden_planks"); placehold = new Non_Existent(4, "Log", 1); recipe.num = 4; recipe.required.Add(placehold); player.Recipes.Add(recipe);
 
                 foreach (var item in player.Recipes)
                 {
-                    item.item.quantity= 0;
+                    item.item.quantity = 0;
                 }
 
 
@@ -152,12 +149,12 @@ namespace Minecraft
 
                 Mob = new Entity("TNT", 0, null, "██"); overworld.Entity_list.Add(Mob);
                 Mob.Color = ConsoleColor.Red;
-                Mob = new Entity("Boss", 1000, "Boss", "██"); 
-                Mob.Color = ConsoleColor.DarkBlue; 
+                Mob = new Entity("Boss", 1000, "Boss", "██");
+                Mob.Color = ConsoleColor.DarkBlue;
                 overworld.Entity_list.Add(Mob);
 
 
-                
+
 
                 //Entity pig = new Entity("pig", 10, null); Mob pig.gravity(grid);
 
@@ -370,9 +367,9 @@ namespace Minecraft
             Structure tree = new Structure();
             tree.Struct = new int[,]{
                 { 0,7,7,7,0 },
-                { 0,7,7,7,0 },
-                { 7,7,7,7,7 },
-                { 7,7,7,7,7 },
+                { 0,7,4,7,0 },
+                { 7,7,4,7,7 },
+                { 7,7,4,7,7 },
                 { 0,0,4,0,0 },
                 { 0,0,4,0,0 }
             };
@@ -454,13 +451,13 @@ namespace Minecraft
 
                 if (random.Next(1, 30) < 4)
                 {
-                    Fill_Index_Cord2(j, num + coalN - vein, j + vein, num + coalN, grid, player.Block_list[7], 5);
+                    Fill_Index_Cord2(j, num + coalN - vein, j + vein, num + coalN, grid, player.GetBlock("Coal_ore"), 5);
 
                 }
                 int vein2 = random.Next(1, 4);
                 if (random.Next(1, 90) < 4)
                 {
-                    Fill_Index_Cord2(j, num + coalN - vein2, j + vein2, num + coalN, grid, player.Block_list[8], 5);
+                    Fill_Index_Cord2(j, num + coalN - vein2, j + vein2, num + coalN, grid, player.GetBlock("Iron_ore"), 5);
 
                 }
                 j++;
@@ -647,8 +644,9 @@ namespace Minecraft
                 case "Q":
 
 
-                    Craft(player, player.Recipes[0]);
+                    Craft(player, player.Recipes.Find(i => i.item.Name == player.Selected_block.Name));
 
+                    Print_window(player);
 
 
                     break;
@@ -1204,7 +1202,7 @@ namespace Minecraft
 
         }
 
-        
+
 
         static void Refresh_area(Game game, Player player, int[,] grid, Cordinates cords)
         {
@@ -1280,23 +1278,13 @@ namespace Minecraft
             {
                 if (player.GetBlock(Item.Name).quantity >= Item.Amount)
                 {
-                    player.GetBlock(name.item.Name).quantity++;
+                    player.GetBlock(name.item.Name).quantity += name.num;
                     player.GetBlock(Item.Name).quantity -= Item.Amount;
                 }
             }
         }
 
-        static void Jugmen_cut(Cordinates pos, Game game, Player player, int[] grid)
-        {
-            int x = pos.x;
-            int y = pos.y;
-            WriteAt("          ", x, y + 0);
-            WriteAt("    ▄     ", x, y + 1);
-            WriteAt("   ▄      ", x, y + 2);
-            WriteAt("   ▀█     ", x, y + 3);
-            WriteAt("    ▀▀█▄ ▄", x, y + 4);
-            Thread.Sleep(10);
-        }
+
 
     }
 
