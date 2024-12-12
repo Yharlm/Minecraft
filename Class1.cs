@@ -1,9 +1,12 @@
+using System.Numerics;
+
 namespace Minecraft
 {
 
     class Player : Cordinates
 
     {
+        public int Crafting_select = 0;
         public List<Recipe> Recipes = new List<Recipe>();
         public Cordinates last_popup;
         public int health = 100;
@@ -34,10 +37,19 @@ namespace Minecraft
     {
         public string[,] Sprites;
     }
-    class Projectile : Entity
+    class Projectile(string name,int damage)
     {
-        public string sprite;
-        public Projectile(string name, int health, string type, string sprite) : base(name, health, type, sprite)
+        public Cordinates cordinates = new Cordinates();
+        public string Name = name;
+        public Cordinates Velocity;
+        public int Damage = damage;
+        public void Add_velocity(Cordinates vector)
+        {
+
+            cordinates.x += Velocity.x;
+            cordinates.y += Velocity.y;
+        }
+        public void Render(Cordinates pos, int[,] grid,Player player)
         {
 
         }
