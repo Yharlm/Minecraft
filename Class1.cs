@@ -37,7 +37,7 @@ namespace Minecraft
     {
         public string[,] Sprites;
     }
-    class Projectile(string name,int damage)
+    class Projectile(string name, int damage)
     {
         public Cordinates cordinates = new Cordinates();
         public string Name = name;
@@ -49,7 +49,7 @@ namespace Minecraft
             cordinates.x += Velocity.x;
             cordinates.y += Velocity.y;
         }
-        public void Render(Cordinates pos, int[,] grid,Player player)
+        public void Render(Cordinates pos, int[,] grid, Player player)
         {
 
         }
@@ -170,7 +170,7 @@ namespace Minecraft
     class Recipe
     {
         public Solid item;
-        public int num;
+        public int num = 1;
         public List<Non_Existent> required = new List<Non_Existent>();
 
 
@@ -283,12 +283,13 @@ namespace Minecraft
 
         public Cordinates cordinates = new Cordinates();
         public ConsoleColor Color;
+        public ConsoleColor BGColor;
         public void gravity(int[,] grid, bool time)
         {
 
 
             //WriteAt("  ", cordinates.x, cordinates.y);
-            if (grid[cordinates.y + 1, cordinates.x] == 0 && time)
+            if (grid[cordinates.y + 1, cordinates.x] == 0 && time && Type != "Projectle")
             {
 
 
@@ -309,11 +310,12 @@ namespace Minecraft
             {
                 velocity = 0;
             }
-
+            Console.BackgroundColor = BGColor;
             Console.ForegroundColor = Color;
             //WriteAt("██", cordinates.x * 2, cordinates.y - 1);
             WriteAt(sprite, cordinates.x * 2, cordinates.y);
             Console.ForegroundColor = default;
+            Console.BackgroundColor = ConsoleColor.Cyan;
         }
 
 
