@@ -55,22 +55,49 @@ namespace Minecraft
 
 
                             break;
-                        case "Projectle":
-                            Cordinates pos = mob.cordinates;
+                        case "Projectile":
 
+                            Cordinates pos = mob.cordinates;
                             if (game.curent_tick)
                             {
-                                
-                                if (mob.cordinates.x == grid.GetLength(1) - 1)
+
+                                if (mob.Name == "Slash")
                                 {
-                                    Kill_entity(game, mob);
+                                    if (pos.x <= pos.x1 + 8)
+                                    {
+                                        Break_block(pos.x, pos.y, grid, player.GetBlock("air"), player);
+                                        Break_block(pos.x - 1, pos.y - 1, grid, player.GetBlock("air"), player);
+                                        Break_block(pos.x - 1, pos.y + 1, grid, player.GetBlock("air"), player);
+                                    }
+                                    if (pos.x >= pos.x1 + 14)
+                                    {
+                                        Break_block(pos.x + 1, pos.y, grid, player.GetBlock("air"), player);
+                                        Break_block(pos.x + 2, pos.y, grid, player.GetBlock("air"), player);
+
+                                    }
+                                    if (pos.x >= pos.x1 + 20)
+                                    {
+                                        Kill_entity(game, mob);
+                                    }
+                                    grid[pos.y, pos.x] = 0;
+                                    //Fill_Index_Cord(pos.x-2,pos.y-2,pos.x,pos.y,grid,player.GetBlock("air"));
+
+                                    WriteAt("  ", mob.cordinates.x * 2, mob.cordinates.y);
+                                    mob.cordinates.x += 1;
+                                    Attack(game, mob.cordinates, grid, 1, 3, 10);
                                 }
-                                grid[pos.y, pos.x] = 0;
-                                //Fill_Index_Cord(pos.x-2,pos.y-2,pos.x,pos.y,grid,player.GetBlock("air"));
-                                Break_block(pos.x, pos.y, grid, player.GetBlock("air"), player);
-                                WriteAt("  ", mob.cordinates.x * 2, mob.cordinates.y);
-                                mob.cordinates.x += 1;
-                                
+                                else
+                                {
+                                    if (grid[pos.y,pos.x] != 0)
+                                    {
+                                        Explosion(game, grid, pos, player);
+                                        Kill_entity(game,mob);
+                                    }
+                                    WriteAt("  ", mob.cordinates.x * 2, mob.cordinates.y);
+                                    mob.cordinates.x += 1;
+                                }
+
+
                             }
                             break;
 
@@ -82,7 +109,7 @@ namespace Minecraft
 
         private static void Kill_entity(Game game, Entity entity)
         {
-
+            
             WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
             game.Existing_Entities.Remove(entity);
         }
@@ -182,13 +209,22 @@ namespace Minecraft
 
                 Mob = new Entity("TNT", 0, null, "██"); overworld.Entity_list.Add(Mob);
                 Mob.Color = ConsoleColor.Red;
-                Mob = new Entity("Boss", 30, "Boss", "██");
-                Mob.Sprite = "EE";
-                Mob.Color = ConsoleColor.DarkBlue;
-                overworld.Entity_list.Add(Mob);
-                Mob = new Entity("Projectle", 0, "Projectle", "==--");
+                Mob = new Entity("Boss", 30, "E", "██");
                 
+                Mob.Color = ConsoleColor.Blue;
                 overworld.Entity_list.Add(Mob);
+
+
+
+
+                
+                //Projectiles
+                Mob = new Entity("Slash", 0, "Projectile", "--");
+                Mob.Color = ConsoleColor.White;
+                overworld.Projectiles.Add(Mob);
+                Mob = new Entity("Arrow", 0, "Projectile", "  ");
+                Mob.BGColor = ConsoleColor.Yellow;
+                overworld.Projectiles.Add(Mob);
 
 
 
@@ -206,7 +242,7 @@ namespace Minecraft
 
                 int[,] grid = new int[100, 200];
                 BuildWorld(grid, player, overworld);
-                double tick = 0.05;
+                double tick = 0.005;
 
                 while (player.health > 0)
                 {
@@ -236,7 +272,7 @@ namespace Minecraft
 
                     Cordinates PlayerPos = new Cordinates();
 
-                    if (grid[player.y + 1, player.x] == 0 && overworld.curent_tick)
+                    if (grid[player.y + 1, player.x] == 0 && overworld.delay(5))
                     {
 
                         if (grid[player.y - 2, player.x] == 0)
@@ -560,17 +596,17 @@ namespace Minecraft
         }
 
 
-        static bool GetRadius(Entity mob1, Player plr, int x, int y)
+        static bool GetRadius(Entity mob1, Cordinates plr, int x, int y)
         {
             bool res = false;
             if (mob1.cordinates.x > plr.x - x && mob1.cordinates.x < plr.x + x)
             {
                 res = true;
             }
-            if (mob1.cordinates.y > plr.y - y && mob1.cordinates.y < plr.y + y)
-            {
-                res = true;
-            }
+            //if (mob1.cordinates.y > plr.y - y && mob1.cordinates.y < plr.y + y)
+            //{
+            //    res = true;
+            //}
 
             return res;
         }
@@ -652,19 +688,24 @@ namespace Minecraft
             switch (player.Input)
             {
                 case "X":
-                    Shoot_Projectile(player, game, player_cords);
-                        break;
+                    Shoot_Projectile(player, game, player_cords,player.Entity_hotbar);
+                    break;
                 case "Q":
                     player.Crafting_select++;
+                    player.Entity_hotbar++;
                     if (player.Crafting_select == player.Recipes.Count)
                     {
                         player.Crafting_select = 0;
+                    }
+                    if (player.Entity_hotbar == player.Projectiles.Count)
+                    {
+                        player.Entity_hotbar = 0;
                     }
                     Print_window(player);
                     break;
 
                 case "R":
-                    Attack(game, player, grid, 4, 5, 2);
+                    Attack(game, Convert_cor(player.x,player.y), grid, 4, 5, 2);
                     Slash(player, game, grid);
 
 
@@ -689,7 +730,7 @@ namespace Minecraft
 
                     break;
                 case "C":
-                    
+
 
                     Craft(player, player.Recipes[player.Crafting_select]);
 
@@ -713,12 +754,12 @@ namespace Minecraft
 
                         WriteAt(game.Existing_Entities.Count().ToString(), 24, 3);
 
-                        Entity mob = game.Entity_list[3];
+                        Entity mob = game.Entity_list[1];
                         Entity Default = new Entity(mob.Name, mob.Health, mob.Type, mob.Sprite);
                         Default.Color = mob.Color;
                         //Default.cordinates.x = random.Next(4, 55);
-                        Default.cordinates.x = player.x
-                        ; Default.cordinates.y = player.y - 10;
+                        Default.cordinates.x = random.Next(30,70);
+                        Default.cordinates.y = player.y - 10;
 
 
 
@@ -729,7 +770,7 @@ namespace Minecraft
                     }
                 case "E":
                     player.hotbar++;
-                   
+
                     player.Selected_block = player.Block_list[player.hotbar];
 
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -1018,7 +1059,7 @@ namespace Minecraft
             WriteAt(Block.Texture, x * 2, y);
             Console.ForegroundColor = default;
             Console.BackgroundColor = ConsoleColor.Cyan;
-            
+
         }
 
         static void Entity_update(int[,] grid, List<Entity> Entity_list, Game game, Player player)
@@ -1030,9 +1071,9 @@ namespace Minecraft
             {
                 foreach (Entity entity in game.Existing_Entities)
                 {
-                    
-                        entity.gravity(grid, game.curent_tick);
-                    
+
+                    entity.gravity(grid, game.curent_tick);
+
 
                     //try { Walk_to_player(entity, player, grid, game); }
                     //catch { }
@@ -1101,7 +1142,7 @@ namespace Minecraft
 
             Fill_Index_Cord2(x - range, y - range, x + range + 1, y + range + 1, grid, air, 30);
             Fill_Index_Cord2(x - range_max, y - range_max - range, x + range_max + 1, y + range_max + 1 - range, grid, air, 2);
-            //Refresh_area_not(game, player, grid, cordinates, pos);
+            Attack(game, pos,grid, 5,range,range_max);
 
             if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range_max, range_max)) { player.health -= 50; }
             if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range, range)) { player.health -= 50; }
@@ -1111,7 +1152,7 @@ namespace Minecraft
         static void Walk_to_player(Entity entity, Player player, int[,] grid, Game game)
         {
 
-            int speed = 1;
+            int speed = 10;
 
             if (player.x < entity.cordinates.x)
             {
@@ -1139,30 +1180,32 @@ namespace Minecraft
 
         }
 
-        private static bool Attack(Game game, Player player, int[,] grid, int knockback, int range, int dmg)
+        private static bool Attack(Game game, Cordinates player, int[,] grid, int knockback, int range, int dmg)
         {
             bool is_there = false;
             foreach (Entity entity in game.Existing_Entities)
             {
-                if (GetRadius(entity, player, 5, 3) && entity.cordinates.x > player.x)
+                if (entity.Type != "Projectle")
                 {
-                    WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
-                    entity.Health -= dmg;
-                    if (grid[entity.cordinates.y, entity.cordinates.x + range] == 0) { entity.cordinates.x += knockback; }
-                    is_there = true;
-                    entity.cordinates.y -= knockback;
-                    entity.velocity += 1;
+                    if (GetRadius(entity, player, range, 3) && entity.cordinates.x > player.x)
+                    {
+                        WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
+                        entity.Health -= dmg;
+                        if (grid[entity.cordinates.y, entity.cordinates.x + range] == 0) { entity.cordinates.x += knockback; }
+                        is_there = true;
+                        entity.cordinates.y -= knockback;
+                        entity.velocity += 1;
+                    }
+                    if (GetRadius(entity, player, range, 3) && entity.cordinates.x < player.x)
+                    {
+                        WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
+                        entity.Health -= dmg;
+                        if (grid[entity.cordinates.y, entity.cordinates.x - range] == 0) { entity.cordinates.x -= knockback; }
+                        is_there = true;
+                        entity.cordinates.y -= knockback;
+                        entity.velocity += -1;
+                    }
                 }
-                else if (GetRadius(entity, player, 5, 3) && entity.cordinates.x < player.x)
-                {
-                    WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
-                    entity.Health -= dmg;
-                    if (grid[entity.cordinates.y, entity.cordinates.x - range] == 0) { entity.cordinates.x -= knockback; }
-                    is_there = true;
-                    entity.cordinates.y -= knockback;
-                    entity.velocity += -1;
-                }
-
 
             }
             return is_there;
@@ -1315,7 +1358,8 @@ namespace Minecraft
                     WriteAt(item.Name + " " + item.quantity.ToString(), 3, 30 + index);
                     WriteAt(">", 2, 30 + index);
                 }
-                if (player.Recipes[player.Crafting_select].item == item) {
+                if (player.Recipes[player.Crafting_select].item == item)
+                {
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     WriteAt(item.Name + " " + item.quantity.ToString(), 3, 30 + index);
                     WriteAt("-", 2, 30 + index);
@@ -1342,14 +1386,16 @@ namespace Minecraft
             }
         }
 
-        static void Shoot_Projectile(Player player, Game game, Cordinates cordinates)
+        static void Shoot_Projectile(Player player, Game game, Cordinates cordinates,int ID)
         {
-            Entity entity = game.Entity_list[4];
+            Entity entity = game.Projectiles[ID];
             entity.cordinates = cordinates;
-            
-            game.Existing_Entities.Add(entity); 
-            
-            
+            entity.cordinates.y -= 1;
+            entity.cordinates.x += 1;
+            entity.cordinates.x1 = cordinates.x;
+            game.Existing_Entities.Add(entity);
+
+
         }
 
 
