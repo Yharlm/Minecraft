@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Xml.Schema;
 
 namespace Minecraft
 {
@@ -6,6 +7,7 @@ namespace Minecraft
     class Player : Cordinates
 
     {
+        public List<Entity> Projectiles = new List<Entity>();
         public int Crafting_select = 0;
         public List<Recipe> Recipes = new List<Recipe>();
         public Cordinates last_popup;
@@ -18,6 +20,7 @@ namespace Minecraft
 
         public bool is_swiming = false;
         public int hotbar;
+        public int Entity_hotbar = 0;
         //public Block_ids Selected_block = null;
         public Solid Selected_block = null;
         public string special_key = "";
@@ -101,6 +104,8 @@ namespace Minecraft
         public bool curent_tick = false;
         public List<Entity> Entity_list = new List<Entity>();
         public List<Entity> Existing_Entities = new List<Entity>();
+        public List<Entity> Projectiles = new List<Entity>();
+
 
 
         public void Spawn_entity(Entity mob)
@@ -266,6 +271,7 @@ namespace Minecraft
         protected static int origRow;
         protected static int origCol;
         public string Sprite = sprite;
+        public Cordinates starting_pos;
         protected static void WriteAt(string s, int x, int y)
         {
             try
@@ -289,7 +295,7 @@ namespace Minecraft
 
 
             //WriteAt("  ", cordinates.x, cordinates.y);
-            if (grid[cordinates.y + 1, cordinates.x] == 0 && time && Type != "Projectle")
+            if (grid[cordinates.y + 1, cordinates.x] == 0 && time && Type != "Projectile")
             {
 
 
