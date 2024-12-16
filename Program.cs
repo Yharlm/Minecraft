@@ -1,4 +1,5 @@
 
+
 //using ConsoleNewMinigame;
 using System.ComponentModel;
 
@@ -24,7 +25,7 @@ namespace Minecraft
                             Walk_to_player(mob, player, grid, game);
                             if (GetRadius_forplayer(player, mob.cordinates, 2, 2) && game.curent_tick)
                             {
-                                Explosion(game, grid, mob.cordinates, player);
+                                Explosion(game, grid, mob.cordinates, player,2);
                             }
                             if (grid[mob.cordinates.y + 1, mob.cordinates.x] != 0)
                             {
@@ -86,12 +87,19 @@ namespace Minecraft
                                     mob.cordinates.x += 1;
                                     Attack(game, mob.cordinates, grid, 1, 3, 10);
                                 }
-                                else
+
+                                else if(mob.Name == "Arrow")
                                 {
-                                    if (grid[pos.y,pos.x] != 0)
+                                    int start = mob.cordinates.x1;
+                                    int range = mob.specialvalue;
+                                    if(mob.cordinates.x % 2 == 0)
                                     {
-                                        Explosion(game, grid, pos, player);
-                                        Kill_entity(game,mob);
+                                        mob.specialvalue += 1;
+                                    }
+                                    if (grid[pos.y, pos.x] != 0)
+                                    {
+                                        Explosion(game, grid, pos, player,range);
+                                        Kill_entity(game, mob);
                                     }
                                     WriteAt("  ", mob.cordinates.x * 2, mob.cordinates.y);
                                     mob.cordinates.x += 1;
@@ -109,7 +117,7 @@ namespace Minecraft
 
         private static void Kill_entity(Game game, Entity entity)
         {
-            
+
             WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
             game.Existing_Entities.Remove(entity);
         }
@@ -210,14 +218,14 @@ namespace Minecraft
                 Mob = new Entity("TNT", 0, null, "██"); overworld.Entity_list.Add(Mob);
                 Mob.Color = ConsoleColor.Red;
                 Mob = new Entity("Boss", 30, "E", "██");
-                
+
                 Mob.Color = ConsoleColor.Blue;
                 overworld.Entity_list.Add(Mob);
 
 
 
 
-                
+
                 //Projectiles
                 Mob = new Entity("Slash", 0, "Projectile", "--");
                 Mob.Color = ConsoleColor.White;
@@ -688,24 +696,27 @@ namespace Minecraft
             switch (player.Input)
             {
                 case "X":
-                    Shoot_Projectile(player, game, player_cords,player.Entity_hotbar);
+                    
+                    
+                    Shoot_Projectile(player, game, player_cords, player.Entity_hotbar);
                     break;
                 case "Q":
                     player.Crafting_select++;
-                    player.Entity_hotbar++;
+                    
                     if (player.Crafting_select == player.Recipes.Count)
                     {
                         player.Crafting_select = 0;
                     }
-                    if (player.Entity_hotbar == player.Projectiles.Count)
+                    player.Entity_hotbar++;
+                    if (player.Entity_hotbar >= 2)
                     {
                         player.Entity_hotbar = 0;
                     }
                     Print_window(player);
                     break;
-
+                    
                 case "R":
-                    Attack(game, Convert_cor(player.x,player.y), grid, 4, 5, 2);
+                    Attack(game, Convert_cor(player.x, player.y), grid, 4, 5, 2);
                     Slash(player, game, grid);
 
 
@@ -722,7 +733,7 @@ namespace Minecraft
                             WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
                             Cordinates cordinates = entity.cordinates;
                             game.Existing_Entities.Remove(entity);
-                            Explosion(game, grid, cordinates, player);
+                            Explosion(game, grid, cordinates, player,4);
 
                         }
                     }
@@ -758,7 +769,7 @@ namespace Minecraft
                         Entity Default = new Entity(mob.Name, mob.Health, mob.Type, mob.Sprite);
                         Default.Color = mob.Color;
                         //Default.cordinates.x = random.Next(4, 55);
-                        Default.cordinates.x = random.Next(30,70);
+                        Default.cordinates.x = random.Next(30, 70);
                         Default.cordinates.y = player.y - 10;
 
 
@@ -1122,15 +1133,15 @@ namespace Minecraft
             Solid item = player.Block_list.Find(x => x.Name == name);
             return item;
         }
-        static void Explosion(Game game, int[,] grid, Cordinates pos, Player player)
+        static void Explosion(Game game, int[,] grid, Cordinates pos, Player player, int radius)
         {
 
 
             Solid air = new Solid("air", 0, "  ", ConsoleColor.White, ConsoleColor.Cyan);
 
 
-            int range = 4;
-            int range_max = 9;
+            int range = radius;
+            int range_max = range*2;
             int x = pos.x;
             int y = pos.y;
 
@@ -1142,7 +1153,7 @@ namespace Minecraft
 
             Fill_Index_Cord2(x - range, y - range, x + range + 1, y + range + 1, grid, air, 30);
             Fill_Index_Cord2(x - range_max, y - range_max - range, x + range_max + 1, y + range_max + 1 - range, grid, air, 2);
-            Attack(game, pos,grid, 5,range,range_max);
+            Attack(game, pos, grid, 5, range, range_max);
 
             if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range_max, range_max)) { player.health -= 50; }
             if (GetRadius_forplayer(pos, Convert_cor(player.x, player.y), range, range)) { player.health -= 50; }
@@ -1386,7 +1397,7 @@ namespace Minecraft
             }
         }
 
-        static void Shoot_Projectile(Player player, Game game, Cordinates cordinates,int ID)
+        static void Shoot_Projectile(Player player, Game game, Cordinates cordinates, int ID)
         {
             Entity entity = game.Projectiles[ID];
             entity.cordinates = cordinates;
