@@ -272,6 +272,8 @@ namespace Minecraft
         protected static int origCol;
         public string Sprite = sprite;
         public Cordinates starting_pos;
+
+        public int specialvalue = 0;
         protected static void WriteAt(string s, int x, int y)
         {
             try
