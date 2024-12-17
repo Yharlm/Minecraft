@@ -23,9 +23,9 @@ namespace Minecraft
                             //catch { }
                             if (mob.Health <= 0) { Kill_entity(game, mob); }
                             Walk_to_player(mob, player, grid, game);
-                            if (GetRadius_forplayer(player, mob.cordinates, 2, 2) && game.curent_tick)
+                            if (GetRadius_forplayer(player, mob.cordinates, 2, 2) && game.delay(5))
                             {
-                                Explosion(game, grid, mob.cordinates, player,2);
+                                Explosion(game, grid, mob.cordinates, player, 2);
                             }
                             if (grid[mob.cordinates.y + 1, mob.cordinates.x] != 0)
                             {
@@ -85,20 +85,21 @@ namespace Minecraft
 
                                     WriteAt("  ", mob.cordinates.x * 2, mob.cordinates.y);
                                     mob.cordinates.x += 1;
+
                                     Attack(game, mob.cordinates, grid, 1, 3, 10);
                                 }
 
-                                else if(mob.Name == "Arrow")
+                                else if (mob.Name == "Arrow")
                                 {
                                     int start = mob.cordinates.x1;
                                     int range = mob.specialvalue;
-                                    if(mob.cordinates.x % 2 == 0)
-                                    {
-                                        mob.specialvalue += 1;
-                                    }
+                                    //if (mob.cordinates.x % 2 == 0)
+                                    //{
+                                    //    mob.specialvalue += 1;
+                                    //}
                                     if (grid[pos.y, pos.x] != 0)
                                     {
-                                        Explosion(game, grid, pos, player,range);
+                                        Explosion(game, grid, pos, player, range);
                                         Kill_entity(game, mob);
                                     }
                                     WriteAt("  ", mob.cordinates.x * 2, mob.cordinates.y);
@@ -231,6 +232,7 @@ namespace Minecraft
                 Mob.Color = ConsoleColor.White;
                 overworld.Projectiles.Add(Mob);
                 Mob = new Entity("Arrow", 0, "Projectile", "  ");
+                Mob.specialvalue = 5;
                 Mob.BGColor = ConsoleColor.Yellow;
                 overworld.Projectiles.Add(Mob);
 
@@ -249,6 +251,7 @@ namespace Minecraft
 
 
                 int[,] grid = new int[100, 200];
+                //int[,] cammeraView = new int[];
                 BuildWorld(grid, player, overworld);
                 double tick = 0.005;
 
@@ -280,7 +283,7 @@ namespace Minecraft
 
                     Cordinates PlayerPos = new Cordinates();
 
-                    if (grid[player.y + 1, player.x] == 0 && overworld.delay(5))
+                    if (grid[player.y + 1, player.x] == 0 && overworld.delay(2))
                     {
 
                         if (grid[player.y - 2, player.x] == 0)
@@ -468,14 +471,15 @@ namespace Minecraft
 
             GenerateWorld(game, grid, player);
 
-            int tree_rate = 24
+            int tree_rate = 34
            ;
             int Tree_r = 0;
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 100;i++)
             {
                 Tree_r = random.Next(1, tree_rate);
                 if (Tree_r >= tree_rate - 2)
                 {
+                    
                     structure(tree, i, grid, player);
                     i += 5;
                 }
@@ -488,61 +492,44 @@ namespace Minecraft
         private static void GenerateWorld(Game game, int[,] grid, Player player)
         {
             Random random = new Random();
-
-
-            int flatness = random.Next(3, 17)
+            int Width = 100;
+            ; int Height = 24
             ;
+            int dirt_Height = 5;
+            int stone_Height = 12;
+            int min = 1;
+            int max = 5;
+            int c = 0;
+            
 
-            int min = 17
-            ; int max = min + 3
-            ; int Height_min = 4
-            ; int underground_level = 30;
-            int num = 0;
-            int curf = 0;
-            for (int j = 0; j < 100;)
+            
+            for (int j = 0; j < Width; j++)
             {
-                num = random.Next(min, max);
-                curf = random.Next(1, flatness) + j;
-                while (curf > j)
+                c = random.Next(min, max+1);
+                if (c == min)
+                { Height++; }
+                else if (c == max)
+                { Height--; }
+
+                Fill_block(j, Height, grid, player.GetBlock("Grass"));
+
+                int count = 1;
+                while(count < dirt_Height)
                 {
-
-                    Fill_block(j, num, grid, player.GetBlock("Grass"));
-
-                    int counter = 1;
-                    while (counter < 5)
-                    {
-                        Fill_block(j, num + counter, grid, player.GetBlock("Dirt"));
-                        counter++;
-                    }
-                    while (counter < underground_level)
-                    {
-                        Fill_block(j, num + counter, grid, player.GetBlock("Stone"));
-                        counter++;
-                    }
-
-                    j++;
+                    Fill_block(j, Height+ count, grid, player.GetBlock("Dirt"));
+                    count++;
                 }
-
-
+                
+                while (count < stone_Height)
+                {
+                    Fill_block(j, Height + count, grid, player.GetBlock("Stone"));
+                    count++;
+                }
             }
-            for (int j = 0; j < 100;)
-            {
-                int coalN = random.Next(14, 24);
-                int vein = random.Next(1, 6);
 
-                if (random.Next(1, 30) < 4)
-                {
-                    Fill_Index_Cord2(j, num + coalN - vein, j + vein, num + coalN, grid, player.GetBlock("Coal_ore"), 5);
 
-                }
-                int vein2 = random.Next(1, 4);
-                if (random.Next(1, 90) < 4)
-                {
-                    Fill_Index_Cord2(j, num + coalN - vein2, j + vein2, num + coalN, grid, player.GetBlock("Iron_ore"), 5);
+           
 
-                }
-                j++;
-            }
         }
 
 
@@ -696,13 +683,13 @@ namespace Minecraft
             switch (player.Input)
             {
                 case "X":
-                    
-                    
+
+
                     Shoot_Projectile(player, game, player_cords, player.Entity_hotbar);
                     break;
                 case "Q":
                     player.Crafting_select++;
-                    
+
                     if (player.Crafting_select == player.Recipes.Count)
                     {
                         player.Crafting_select = 0;
@@ -714,7 +701,7 @@ namespace Minecraft
                     }
                     Print_window(player);
                     break;
-                    
+
                 case "R":
                     Attack(game, Convert_cor(player.x, player.y), grid, 4, 5, 2);
                     Slash(player, game, grid);
@@ -733,7 +720,7 @@ namespace Minecraft
                             WriteAt("  ", entity.cordinates.x * 2, entity.cordinates.y);
                             Cordinates cordinates = entity.cordinates;
                             game.Existing_Entities.Remove(entity);
-                            Explosion(game, grid, cordinates, player,4);
+                            Explosion(game, grid, cordinates, player, 4);
 
                         }
                     }
@@ -1141,7 +1128,7 @@ namespace Minecraft
 
 
             int range = radius;
-            int range_max = range*2;
+            int range_max = range * 2;
             int x = pos.x;
             int y = pos.y;
 
